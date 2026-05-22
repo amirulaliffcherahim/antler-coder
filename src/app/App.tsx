@@ -1,11 +1,13 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, lazy, Suspense } from "react";
 import WindowChrome from "./WindowChrome";
 import { usePanelSize, usePanelSizeVertical, resetPanelLayout } from "@/hooks/usePanelSize";
 import { PanelSplitter } from "@/components/ui/PanelSplitter";
 import { FileExplorer } from "@/modules/explorer";
-import { EditorPane } from "@/modules/editor";
-import { TerminalTabs } from "@/modules/terminal";
 import { ThemeProvider } from "@/modules/theme/ThemeProvider";
+
+// Lazy-load heavy editor + terminal (CodeMirror + xterm.js ~500kB combined)
+const EditorPane = lazy(() => import("@/modules/editor/EditorPane"));
+const TerminalTabs = lazy(() => import("@/modules/terminal/TerminalTabs"));
 
 import { useGlobalShortcuts } from "@/modules/shortcuts/hooks/useGlobalShortcuts";
 import { registerCommand } from "@/modules/shortcuts/shortcuts";
@@ -264,7 +266,17 @@ function AppContent() {
 
           <div className="flex-1 min-h-0 relative">
             {activeFilePath ? (
-              <EditorPane filePath={activeFilePath} />
+              <Suspense fallback={
+                <div className="flex items-center justify-center h-full">
+                  <div className="flex flex-col gap-2 w-64">
+                    <div className="h-3 bg-muted rounded animate-pulse" />
+                    <div className="h-3 bg-muted rounded animate-pulse w-3/4" />
+                    <div className="h-3 bg-muted rounded animate-pulse w-1/2" />
+                  </div>
+                </div>
+              }>
+                <EditorPane filePath={activeFilePath} />
+              </Suspense>
             ) : (
               <div className="flex items-center justify-center h-full text-muted-foreground animate-fade-in"
               >
@@ -290,12 +302,18 @@ function AppContent() {
               className="shrink-0 border-t border-border"
               style={{ height: terminalPx }}
             >
-              <TerminalTabs
-                defaultCwd={workspacePath}
-                initialTabs={terminalState?.tabs}
-                initialActiveId={terminalState?.activeId}
-                onSessionChange={(tabs, activeId) => setTerminalState({ tabs, activeId })}
-              />
+              <Suspense fallback={
+                <div className="h-full flex items-center justify-center text-muted-foreground text-[10px]">
+                  Loading terminal…
+                </div>
+              }>
+                <TerminalTabs
+                  defaultCwd={workspacePath}
+                  initialTabs={terminalState?.tabs}
+                  initialActiveId={terminalState?.activeId}
+                  onSessionChange={(tabs, activeId) => setTerminalState({ tabs, activeId })}
+                />
+              </Suspense>
             </div>
           )}
         </main>
