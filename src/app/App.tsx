@@ -8,15 +8,27 @@ import { useGlobalShortcuts } from "@/modules/shortcuts/hooks/useGlobalShortcuts
 import { registerCommand } from "@/modules/shortcuts/shortcuts";
 import { openSettingsWindow } from "@/modules/settings/openSettingsWindow";
 import { AgentPopup } from "@/modules/agent-shell";
+import { useWorkspaceEnvStore, type WorkspaceEnv } from "@/modules/workspace";
+import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
 
 interface OpenFile {
   path: string;
   name: string;
 }
 
+function getWorkspaceRootPath(env: WorkspaceEnv): string {
+  if (env.kind === "local") return env.rootPath;
+  // For WSL on Windows, paths are UNC: \\wsl.localhost\{distro}\...
+  // Since we're developing on Linux, we can't construct real WSL UNC paths here.
+  // The Rust backend handles WSL path resolution.
+  return env.rootPath;
+}
+
 function AppContent() {
   const { tokens } = useTheme();
-  const [workspacePath] = useState<string>("/home/aleph");
+  const { env: workspaceEnv } = useWorkspaceEnvStore();
+  const workspacePath = getWorkspaceRootPath(workspaceEnv);
+
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
   const [showExplorer, setShowExplorer] = useState(true);
@@ -101,6 +113,11 @@ function AppContent() {
     [activeFilePath]
   );
 
+  const workspaceLabel =
+    workspaceEnv.kind === "local"
+      ? workspacePath
+      : `WSL:${workspaceEnv.distro} → ${workspacePath}`;
+
   return (
     <div
       className="flex h-screen w-screen flex-col overflow-hidden font-mono"
@@ -111,7 +128,8 @@ function AppContent() {
     >
       {!zenMode && (
         <WindowChrome
-          workspacePath={workspacePath}
+          workspaceLabel={workspaceLabel}
+          workspaceEnv={workspaceEnv}
           agentStatus={null}
           onToggleExplorer={() => setShowExplorer((v) => !v)}
         />
@@ -217,6 +235,8 @@ function AppContent() {
             color: tokens.mutedForeground,
           }}
         >
+          <WorkspacePicker />
+          <span className="w-px h-3" style={{ backgroundColor: tokens.border }} />
           <span style={{ color: tokens.neonCyan }}>
             {activeFilePath ? activeFilePath.split("/").pop() : "READY"}
           </span>
@@ -229,7 +249,11 @@ function AppContent() {
       )}
 
       {/* Agent popup */}
-      <AgentPopup open={agentPopupOpen} onClose={() => setAgentPopupOpen(false)} />
+      <AgentPopup
+        open={agentPopupOpen}
+        onClose={() => setAgentPopupOpen(false)}
+        workspaceEnv={workspaceEnv}
+      />
     </div>
   );
 }

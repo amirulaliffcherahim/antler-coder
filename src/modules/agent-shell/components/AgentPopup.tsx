@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useTheme } from "@/modules/theme/ThemeProvider";
 import { useAgentShellStore } from "../store";
 import type { ExternalAgentConfig } from "../lib/types";
+import type { WorkspaceEnv } from "@/modules/workspace";
 import AgentTabBar from "./AgentTabBar";
 import AgentTerminal from "./AgentTerminal";
 import AgentPicker from "./AgentPicker";
@@ -10,9 +11,15 @@ import AgentPicker from "./AgentPicker";
 interface AgentPopupProps {
   open: boolean;
   onClose: () => void;
+  workspaceEnv: WorkspaceEnv;
 }
 
-export default function AgentPopup({ open, onClose }: AgentPopupProps) {
+function toRustWorkspace(env: WorkspaceEnv): { kind: "local" } | { kind: "wsl"; distro: string } {
+  if (env.kind === "local") return { kind: "local" };
+  return { kind: "wsl", distro: env.distro };
+}
+
+export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupProps) {
   const { tokens } = useTheme();
   const { tabs, activeTabId, openTab, updateTabStatus } = useAgentShellStore();
   const [showPicker, setShowPicker] = useState(false);
@@ -25,7 +32,7 @@ export default function AgentPopup({ open, onClose }: AgentPopupProps) {
           args: config.args,
           env: config.env,
           cwd: config.cwd ?? null,
-          workspace: { kind: "local" },
+          workspace: toRustWorkspace(workspaceEnv),
           cols: 80,
           rows: 24,
           onData: null,
@@ -49,7 +56,7 @@ export default function AgentPopup({ open, onClose }: AgentPopupProps) {
         console.error("Failed to spawn agent:", e);
       }
     },
-    [openTab, updateTabStatus]
+    [openTab, updateTabStatus, workspaceEnv]
   );
 
   if (!open) return null;
@@ -145,6 +152,7 @@ export default function AgentPopup({ open, onClose }: AgentPopupProps) {
         <AgentPicker
           onSelect={spawnAgent}
           onClose={() => setShowPicker(false)}
+          workspaceEnv={workspaceEnv}
         />
       )}
     </>

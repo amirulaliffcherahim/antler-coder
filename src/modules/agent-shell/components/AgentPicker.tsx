@@ -3,16 +3,18 @@ import { useTheme } from "@/modules/theme/ThemeProvider";
 import { useAgentShellStore } from "../store";
 import { useAgentDiscovery } from "../hooks/useAgentDiscovery";
 import type { ExternalAgentConfig } from "../lib/types";
+import type { WorkspaceEnv } from "@/modules/workspace";
 
 interface AgentPickerProps {
   onSelect: (config: ExternalAgentConfig) => void;
   onClose: () => void;
+  workspaceEnv: WorkspaceEnv;
 }
 
-export default function AgentPicker({ onSelect, onClose }: AgentPickerProps) {
+export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPickerProps) {
   const { tokens } = useTheme();
   const { configs } = useAgentShellStore();
-  const { discover, isDiscovering } = useAgentDiscovery();
+  const { discover, isDiscovering } = useAgentDiscovery(workspaceEnv);
   const [showCustom, setShowCustom] = useState(false);
   const [customName, setCustomName] = useState("");
   const [customBinary, setCustomBinary] = useState("");

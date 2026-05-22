@@ -3,12 +3,9 @@ use std::path::PathBuf;
 use tauri::command;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "lowercase")]
 pub enum WorkspaceEnv {
     Local,
-    #[cfg(windows)]
-    Wsl { distro: String },
-    #[cfg(not(windows))]
-    #[serde(skip)]
     Wsl { distro: String },
 }
 

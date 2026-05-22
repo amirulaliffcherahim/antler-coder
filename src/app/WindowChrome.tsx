@@ -1,13 +1,16 @@
 import { useTheme } from "@/modules/theme/ThemeProvider";
+import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
+import type { WorkspaceEnv } from "@/modules/workspace";
 
 interface WindowChromeProps {
-  workspacePath: string | null;
+  workspaceLabel: string;
+  workspaceEnv: WorkspaceEnv;
   agentStatus: { name: string; running: boolean } | null;
   onToggleExplorer?: () => void;
 }
 
 export default function WindowChrome({
-  workspacePath,
+  workspaceLabel,
   agentStatus,
   onToggleExplorer,
 }: WindowChromeProps) {
@@ -22,7 +25,7 @@ export default function WindowChrome({
         borderBottom: `1px solid ${tokens.border}`,
       }}
     >
-      {/* Left: menu + title */}
+      {/* Left: menu + title + workspace picker */}
       <div className="flex items-center gap-2 px-3">
         <button
           onClick={onToggleExplorer}
@@ -38,6 +41,8 @@ export default function WindowChrome({
         >
           ANTLER CODER
         </span>
+        <span className="text-[10px] opacity-30">|</span>
+        <WorkspacePicker />
       </div>
 
       {/* Center: workspace path */}
@@ -46,7 +51,7 @@ export default function WindowChrome({
           className="text-[10px] truncate max-w-md"
           style={{ color: tokens.mutedForeground }}
         >
-          {workspacePath ?? "No workspace"}
+          {workspaceLabel}
           {agentStatus && (
             <span className="ml-2">
               <span

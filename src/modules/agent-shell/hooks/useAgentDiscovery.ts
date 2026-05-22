@@ -2,8 +2,14 @@ import { useEffect, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { useAgentShellStore } from "../store";
 import type { DetectedAgent, ExternalAgentConfig } from "../lib/types";
+import type { WorkspaceEnv } from "@/modules/workspace";
 
-export function useAgentDiscovery() {
+function toRustWorkspace(env: WorkspaceEnv): { kind: "local" } | { kind: "wsl"; distro: string } {
+  if (env.kind === "local") return { kind: "local" };
+  return { kind: "wsl", distro: env.distro };
+}
+
+export function useAgentDiscovery(workspaceEnv: WorkspaceEnv) {
   const { discovered, setDiscovered, isDiscovering, setIsDiscovering, configs, setConfigs } =
     useAgentShellStore();
 
@@ -11,7 +17,7 @@ export function useAgentDiscovery() {
     setIsDiscovering(true);
     try {
       const agents = await invoke<DetectedAgent[]>("agent_discover", {
-        workspace: { kind: "local" },
+        workspace: toRustWorkspace(workspaceEnv),
       });
       setDiscovered(agents);
 
@@ -35,14 +41,14 @@ export function useAgentDiscovery() {
     } finally {
       setIsDiscovering(false);
     }
-  }, [setIsDiscovering, setDiscovered, setConfigs, configs]);
+  }, [setIsDiscovering, setDiscovered, setConfigs, configs, workspaceEnv]);
 
-  // Auto-discover on mount
+  // Auto-discover on mount or when workspace changes
   useEffect(() => {
     if (configs.length === 0 && !isDiscovering) {
       discover();
     }
-  }, []);
+  }, [workspaceEnv.kind, workspaceEnv.kind === "wsl" ? workspaceEnv.distro : ""]);
 
   return { discover, isDiscovering, discovered };
 }
