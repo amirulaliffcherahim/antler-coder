@@ -33,7 +33,7 @@
     },
     "resources": [],
     "shortDescription": "Universal agent shell",
-    "targets": "all",
+    "targets": ["deb", "rpm"],
     "windows": {
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",

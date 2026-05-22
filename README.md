@@ -16,23 +16,29 @@
 
 | Feature | Status |
 |---------|--------|
-| Multi-tab floating agent popup (PTY terminal) | 🚧 Phase 4 |
-| Auto-discovery of CLI agents (Claude, Gemini, Aider, etc.) | 🚧 Phase 4 |
-| Inline editor autocomplete (BYOK) | 🚧 Phase 3 |
-| CodeMirror 6 editor with Vim mode | 🚧 Phase 1 |
-| File explorer with monochrome icons | 🚧 Phase 1 |
-| Terminal tabs (xterm.js) | 🚧 Phase 1 |
-| Global ripgrep search | 🚧 Phase 6 |
-| Side-by-side diff viewer | 🚧 Phase 6 |
-| Web + Markdown preview | 🚧 Phase 6 |
+| Multi-tab floating agent popup (PTY terminal) | ✅ |
+| Auto-discovery of CLI agents (Claude, Gemini, Aider, etc.) | ✅ |
+| Inline editor autocomplete (BYOK) | ✅ Ghost-text inline completion |
+| CodeMirror 6 editor with Vim mode | ✅ Togglable via Settings |
+| File explorer with monochrome icons | ✅ |
+| Terminal tabs (xterm.js) | ✅ |
+| Global ripgrep search | ✅ |
+| Settings window | ✅ General, Models, Agents, Shortcuts, Themes, About |
+| Onboarding wizard | ✅ 4-step first-run |
+| Theme system + Zen mode | ✅ |
+| WSL integration | ✅ Distro picker, WSL PATH scan |
+| Side-by-side diff viewer | ⏳ Not implemented |
+| Web + Markdown preview | ⏳ Not implemented |
+| Session restore | ⏳ Not implemented |
 
 ## Tech Stack
 
 - **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui + Zustand
-- **Editor:** CodeMirror 6 (with Vim mode via `@replit/codemirror-vim`)
+- **Editor:** CodeMirror 6 (with Vim mode via `@replit/codemirror-vim` + inline autocomplete)
 - **Terminal:** xterm.js
 - **Backend:** Tauri v2 + Rust
 - **PTY:** portable-pty
+- **Secrets:** OS keyring (keyring crate)
 - **Package Manager:** pnpm
 
 ## Development

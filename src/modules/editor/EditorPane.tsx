@@ -4,6 +4,8 @@ import { EditorState } from "@codemirror/state";
 import { invoke } from "@tauri-apps/api/core";
 import { createBaseExtensions } from "./lib/extensions";
 import { loadLanguageForFile } from "./lib/languageResolver";
+import { usePreferencesStore } from "../../modules/settings/preferences";
+import { inlineCompletionExtension, setActiveProvider } from "../../modules/autocomplete/completionExt";
 
 export interface EditorPaneHandle {
   getContent: () => string;
@@ -21,6 +23,9 @@ const EditorPane = forwardRef<EditorPaneHandle, EditorPaneProps>(
     const viewRef = useRef<EditorView | null>(null);
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
+    const vimMode = usePreferencesStore((s) => s.vimMode);
+    const autocompleteEnabled = usePreferencesStore((s) => s.autocompleteEnabled);
+    const autocompleteProvider = usePreferencesStore((s) => s.autocompleteProvider);
 
     // Load file content
     useEffect(() => {
@@ -54,8 +59,14 @@ const EditorPane = forwardRef<EditorPaneHandle, EditorPaneProps>(
         const langExt = await loadLanguageForFile(filePath);
         if (cancelled) return;
 
-        const extensions = [...createBaseExtensions()];
+        const extensions = [...createBaseExtensions({ vimMode })];
         if (langExt) extensions.push(langExt);
+
+        // Autocomplete
+        setActiveProvider(autocompleteProvider ?? null);
+        if (autocompleteEnabled && autocompleteProvider) {
+          extensions.push(inlineCompletionExtension());
+        }
 
         const state = EditorState.create({
           doc: content,
@@ -75,7 +86,7 @@ const EditorPane = forwardRef<EditorPaneHandle, EditorPaneProps>(
         viewRef.current?.destroy();
         viewRef.current = null;
       };
-    }, [content, loading, filePath]);
+    }, [content, loading, filePath, vimMode, autocompleteEnabled, autocompleteProvider]);
 
     useImperativeHandle(ref, () => ({
       getContent: () => viewRef.current?.state.doc.toString() ?? "",
