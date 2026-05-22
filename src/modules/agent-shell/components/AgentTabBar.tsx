@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useAgentShellStore } from "../store";
 
 interface AgentTabBarProps {

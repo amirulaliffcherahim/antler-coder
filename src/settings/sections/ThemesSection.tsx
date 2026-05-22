@@ -1,4 +1,4 @@
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 
 export function ThemesSection() {
   const { tokens, themeId, setTheme } = useTheme();

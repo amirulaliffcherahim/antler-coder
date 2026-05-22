@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useWorkspaceEnvStore } from "@/modules/workspace";
 
 interface SearchResult {

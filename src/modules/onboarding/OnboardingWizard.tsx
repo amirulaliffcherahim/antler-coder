@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useWorkspaceEnvStore } from "@/modules/workspace";
 import { useAgentDiscovery } from "@/modules/agent-shell";
 

@@ -1,4 +1,4 @@
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 
 export function AboutSection() {
   const { tokens } = useTheme();

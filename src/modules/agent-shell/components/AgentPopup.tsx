@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useAgentShellStore } from "../store";
 import type { ExternalAgentConfig } from "../lib/types";
 import type { WorkspaceEnv } from "@/modules/workspace";

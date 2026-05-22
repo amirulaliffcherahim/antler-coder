@@ -1,4 +1,4 @@
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
 import type { WorkspaceEnv } from "@/modules/workspace";
 

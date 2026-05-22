@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useAgentShellStore } from "../store";
 import { useAgentDiscovery } from "../hooks/useAgentDiscovery";
 import type { ExternalAgentConfig } from "../lib/types";

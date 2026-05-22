@@ -27,3 +27,9 @@ export interface ThemeTokens {
 }
 
 export type ThemeId = "neon-dark" | "neon-light";
+
+export interface ThemeContextValue {
+  themeId: ThemeId;
+  tokens: ThemeTokens;
+  setTheme: (id: ThemeId) => void;
+}

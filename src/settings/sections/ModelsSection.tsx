@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { usePreferencesStore, type ProviderConfig } from "@/modules/settings/preferences";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 
 const BUILTIN_PROVIDERS: Omit<ProviderConfig, "apiKey">[] = [
   { id: "openai", name: "OpenAI", baseUrl: "https://api.openai.com/v1", modelId: "gpt-4o-mini" },

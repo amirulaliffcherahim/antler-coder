@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { GeneralSection } from "./sections/GeneralSection";
 import { ModelsSection } from "./sections/ModelsSection";
 import { AgentsSection } from "./sections/AgentsSection";

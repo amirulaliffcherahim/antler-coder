@@ -1,5 +1,5 @@
 import { usePreferencesStore } from "@/modules/settings/preferences";
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 
 export function GeneralSection() {
   const { tokens } = useTheme();

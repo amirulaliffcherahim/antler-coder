@@ -1,4 +1,4 @@
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { usePreferencesStore } from "@/modules/settings/preferences";
 import { getAllCommands, getBinding } from "@/modules/shortcuts/shortcuts";
 

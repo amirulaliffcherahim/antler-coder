@@ -3,7 +3,8 @@ import WindowChrome from "./WindowChrome";
 import { FileExplorer } from "@/modules/explorer";
 import { EditorPane } from "@/modules/editor";
 import { TerminalTabs } from "@/modules/terminal";
-import { ThemeProvider, useTheme } from "@/modules/theme/ThemeProvider";
+import { ThemeProvider } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useGlobalShortcuts } from "@/modules/shortcuts/hooks/useGlobalShortcuts";
 import { registerCommand } from "@/modules/shortcuts/shortcuts";
 import { openSettingsWindow } from "@/modules/settings/openSettingsWindow";
@@ -102,6 +103,7 @@ function AppContent() {
       defaultBinding: "Shift+Space+f",
       action: () => setSearchOpen(true),
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilePath]);
 
   const handleFileClick = useCallback((path: string) => {

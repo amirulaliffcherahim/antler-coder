@@ -44,11 +44,13 @@ export function useAgentDiscovery(workspaceEnv: WorkspaceEnv) {
   }, [setIsDiscovering, setDiscovered, setConfigs, configs, workspaceEnv]);
 
   // Auto-discover on mount or when workspace changes
+  const workspaceKey = workspaceEnv.kind === "wsl" ? workspaceEnv.distro : "local";
   useEffect(() => {
     if (configs.length === 0 && !isDiscovering) {
       discover();
     }
-  }, [workspaceEnv.kind, workspaceEnv.kind === "wsl" ? workspaceEnv.distro : ""]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceKey]);
 
   return { discover, isDiscovering, discovered };
 }

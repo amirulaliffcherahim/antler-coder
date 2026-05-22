@@ -1,4 +1,4 @@
-import { useTheme } from "@/modules/theme/ThemeProvider";
+import { useTheme } from "@/modules/theme/useTheme";
 import { useAgentShellStore } from "@/modules/agent-shell";
 
 export function AgentsSection() {

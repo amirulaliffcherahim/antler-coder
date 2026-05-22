@@ -43,7 +43,7 @@ const PRESETS: Record<KeybindingPreset, Record<string, string>> = {
   },
 };
 
-let commands = new Map<string, Command>();
+const commands = new Map<string, Command>();
 let currentPreset: KeybindingPreset = "vim-terminal";
 let spaceChordActive = false;
 let spaceTimeout: ReturnType<typeof setTimeout> | null = null;
