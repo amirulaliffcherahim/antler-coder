@@ -1,9 +1,14 @@
 interface WindowChromeProps {
   workspacePath: string | null;
   agentStatus: { name: string; running: boolean } | null;
+  onToggleExplorer?: () => void;
 }
 
-export default function WindowChrome({ workspacePath, agentStatus }: WindowChromeProps) {
+export default function WindowChrome({
+  workspacePath,
+  agentStatus,
+  onToggleExplorer,
+}: WindowChromeProps) {
   return (
     <header
       data-tauri-drag-region
@@ -11,8 +16,12 @@ export default function WindowChrome({ workspacePath, agentStatus }: WindowChrom
     >
       {/* Left: menu + title */}
       <div className="flex items-center gap-2 px-3">
-        <button className="text-muted-foreground hover:text-foreground text-[10px]">
-          <span className="inline-block w-4 text-center">≡</span>
+        <button
+          onClick={onToggleExplorer}
+          className="text-muted-foreground hover:text-foreground text-[10px] w-4 text-center"
+          title="Toggle explorer"
+        >
+          ≡
         </button>
         <span className="text-[10px] font-medium tracking-wide opacity-70">
           ANTLER CODER
