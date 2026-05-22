@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import WindowChrome from "./WindowChrome";
+import { usePanelSize, usePanelSizeVertical, resetPanelLayout } from "@/hooks/usePanelSize";
+import { PanelSplitter } from "@/components/ui/PanelSplitter";
 import { FileExplorer } from "@/modules/explorer";
 import { EditorPane } from "@/modules/editor";
 import { TerminalTabs } from "@/modules/terminal";
@@ -33,6 +35,10 @@ function AppContent() {
 
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
+  // Panel resize state (persisted)
+  const [sidebarPx, sidebarDrag] = usePanelSize("sidebar", 224, 160, 400);
+  const [terminalPx, terminalDrag] = usePanelSizeVertical("terminal", 192, 80, 600);
+
   const [showExplorer, setShowExplorer] = useState(true);
   const [showTerminal, setShowTerminal] = useState(true);
   const [zenMode, setZenMode] = useState(false);
@@ -102,6 +108,16 @@ function AppContent() {
       defaultBinding: "Shift+Space+f",
       action: () => setSearchOpen(true),
     });
+    registerCommand({
+      id: "reset-layout",
+      name: "Reset Layout",
+      description: "Reset panel sizes to defaults",
+      defaultBinding: "",
+      action: () => {
+        resetPanelLayout();
+        window.location.reload();
+      },
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilePath]);
 
@@ -153,13 +169,18 @@ function AppContent() {
       <div className="flex flex-1 min-h-0">
         {showExplorer && !zenMode && (
           <aside
-            className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden"
+            className="shrink-0 border-r border-border flex flex-col overflow-hidden"
+            style={{ width: sidebarPx }}
           >
             <FileExplorer
               rootPath={workspacePath}
               onFileClick={handleFileClick}
             />
           </aside>
+        )}
+
+        {showExplorer && !zenMode && (
+          <PanelSplitter orientation="vertical" onMouseDown={sidebarDrag.onMouseDown} />
         )}
 
         <main className="flex-1 flex flex-col min-w-0">
@@ -213,8 +234,12 @@ function AppContent() {
           </div>
 
           {showTerminal && !zenMode && (
+            <PanelSplitter orientation="horizontal" onMouseDown={terminalDrag.onMouseDown} />
+          )}
+          {showTerminal && !zenMode && (
             <div
-              className="h-48 shrink-0 border-t border-border"
+              className="shrink-0 border-t border-border"
+              style={{ height: terminalPx }}
             >
               <TerminalTabs defaultCwd={workspacePath} />
             </div>
