@@ -7,6 +7,7 @@ import { ThemeProvider, useTheme } from "@/modules/theme/ThemeProvider";
 import { useGlobalShortcuts } from "@/modules/shortcuts/hooks/useGlobalShortcuts";
 import { registerCommand } from "@/modules/shortcuts/shortcuts";
 import { openSettingsWindow } from "@/modules/settings/openSettingsWindow";
+import { AgentPopup } from "@/modules/agent-shell";
 
 interface OpenFile {
   path: string;
@@ -227,37 +228,8 @@ function AppContent() {
         </footer>
       )}
 
-      {/* Agent popup placeholder */}
-      {agentPopupOpen && (
-        <div
-          className="fixed right-4 bottom-8 z-50 flex flex-col overflow-hidden rounded border shadow-2xl"
-          style={{
-            width: "min(34rem, calc(100vw - 2rem))",
-            height: "min(32rem, calc(100vh - 6rem))",
-            backgroundColor: tokens.card,
-            borderColor: tokens.border,
-            boxShadow: `0 24px 48px -12px rgba(0,0,0,0.6), 0 0 0 1px ${tokens.border}`,
-          }}
-        >
-          <div
-            className="flex h-9 items-center justify-between px-3 border-b shrink-0"
-            style={{ borderColor: tokens.border }}
-          >
-            <span className="text-[11px] font-medium" style={{ color: tokens.neonCyan }}>
-              Agent Terminal
-            </span>
-            <button
-              onClick={() => setAgentPopupOpen(false)}
-              className="text-muted-foreground hover:text-foreground text-[10px]"
-            >
-              ×
-            </button>
-          </div>
-          <div className="flex-1 flex items-center justify-center text-[11px]" style={{ color: tokens.mutedForeground }}>
-            Agent popup — Phase 4 implementation
-          </div>
-        </div>
-      )}
+      {/* Agent popup */}
+      <AgentPopup open={agentPopupOpen} onClose={() => setAgentPopupOpen(false)} />
     </div>
   );
 }
