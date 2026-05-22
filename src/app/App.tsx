@@ -10,6 +10,8 @@ import { openSettingsWindow } from "@/modules/settings/openSettingsWindow";
 import { AgentPopup } from "@/modules/agent-shell";
 import { useWorkspaceEnvStore, type WorkspaceEnv } from "@/modules/workspace";
 import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
+import SearchPanel from "@/modules/search/SearchPanel";
+import OnboardingWizard from "@/modules/onboarding/OnboardingWizard";
 
 interface OpenFile {
   path: string;
@@ -35,6 +37,15 @@ function AppContent() {
   const [showTerminal, setShowTerminal] = useState(true);
   const [zenMode, setZenMode] = useState(false);
   const [agentPopupOpen, setAgentPopupOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    // Check if user has completed onboarding before
+    try {
+      return localStorage.getItem("antler:onboarding") !== "done";
+    } catch {
+      return true;
+    }
+  });
 
   useGlobalShortcuts();
 
@@ -83,6 +94,13 @@ function AppContent() {
       description: "Open settings window",
       defaultBinding: "Space+,",
       action: () => void openSettingsWindow("general"),
+    });
+    registerCommand({
+      id: "search-files",
+      name: "Search Files",
+      description: "Search across files",
+      defaultBinding: "Shift+Space+f",
+      action: () => setSearchOpen(true),
     });
   }, [activeFilePath]);
 
@@ -254,6 +272,27 @@ function AppContent() {
         onClose={() => setAgentPopupOpen(false)}
         workspaceEnv={workspaceEnv}
       />
+
+      {/* Search panel */}
+      <SearchPanel
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onFileClick={handleFileClick}
+      />
+
+      {/* Onboarding wizard */}
+      {showOnboarding && (
+        <OnboardingWizard
+          onComplete={() => {
+            setShowOnboarding(false);
+            try {
+              localStorage.setItem("antler:onboarding", "done");
+            } catch {
+              // ignore
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
