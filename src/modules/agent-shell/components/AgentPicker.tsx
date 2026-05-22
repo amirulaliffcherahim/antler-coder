@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useTheme } from "@/modules/theme/useTheme";
 import { useAgentShellStore } from "../store";
 import { useAgentDiscovery } from "../hooks/useAgentDiscovery";
 import type { ExternalAgentConfig } from "../lib/types";
@@ -12,7 +11,6 @@ interface AgentPickerProps {
 }
 
 export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPickerProps) {
-  const { tokens } = useTheme();
   const { configs } = useAgentShellStore();
   const { discover, isDiscovering } = useAgentDiscovery(workspaceEnv);
   const [showCustom, setShowCustom] = useState(false);
@@ -44,19 +42,14 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
       onClick={onClose}
     >
       <div
-        className="w-[28rem] max-h-[32rem] flex flex-col rounded border shadow-2xl overflow-hidden"
-        style={{
-          backgroundColor: tokens.card,
-          borderColor: tokens.border,
-        }}
+        className="w-[28rem] max-h-[32rem] flex flex-col rounded border border-border bg-card shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
-          className="flex items-center justify-between px-4 py-3 border-b"
-          style={{ borderColor: tokens.border }}
+          className="flex items-center justify-between px-4 py-3 border-b border-border"
         >
-          <h3 className="text-[12px] font-semibold" style={{ color: tokens.neonCyan }}>
+          <h3 className="text-[12px] font-semibold text-neon-cyan">
             Open Agent
           </h3>
           <button
@@ -73,8 +66,7 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
           {autoConfigs.length > 0 && (
             <div className="mb-3">
               <div
-                className="text-[10px] font-medium uppercase tracking-wide mb-1.5 px-1"
-                style={{ color: tokens.mutedForeground }}
+                className="text-[10px] font-medium uppercase tracking-wide mb-1.5 px-1 text-muted-foreground"
               >
                 Auto-detected
               </div>
@@ -83,22 +75,12 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
                   <button
                     key={config.id}
                     onClick={() => onSelect(config)}
-                    className="flex items-center gap-2 px-2 py-1.5 text-[11px] rounded transition-colors text-left"
-                    style={{
-                      color: tokens.foreground,
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = tokens.accent;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }}
+                    className="flex items-center gap-2 px-2 py-1.5 text-[11px] rounded transition-colors text-left text-foreground hover:bg-accent"
                   >
-                    <span style={{ color: tokens.neonCyan }}>$</span>
+                    <span className="text-neon-cyan">$</span>
                     <span className="font-medium">{config.name}</span>
                     <span
-                      className="ml-auto text-[10px] truncate max-w-40"
-                      style={{ color: tokens.mutedForeground }}
+                      className="ml-auto text-[10px] truncate max-w-40 text-muted-foreground"
                     >
                       {config.detectedPath}
                     </span>
@@ -112,8 +94,7 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
           {customConfigs.length > 0 && (
             <div className="mb-3">
               <div
-                className="text-[10px] font-medium uppercase tracking-wide mb-1.5 px-1"
-                style={{ color: tokens.mutedForeground }}
+                className="text-[10px] font-medium uppercase tracking-wide mb-1.5 px-1 text-muted-foreground"
               >
                 Custom
               </div>
@@ -122,16 +103,9 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
                   <button
                     key={config.id}
                     onClick={() => onSelect(config)}
-                    className="flex items-center gap-2 px-2 py-1.5 text-[11px] rounded transition-colors text-left"
-                    style={{ color: tokens.foreground }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = tokens.accent;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }}
+                    className="flex items-center gap-2 px-2 py-1.5 text-[11px] rounded transition-colors text-left text-foreground hover:bg-accent"
                   >
-                    <span style={{ color: tokens.neonPurple }}>$</span>
+                    <span className="text-violet-400">$</span>
                     <span className="font-medium">{config.name}</span>
                   </button>
                 ))}
@@ -140,7 +114,7 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
           )}
 
           {autoConfigs.length === 0 && customConfigs.length === 0 && (
-            <div className="text-center py-6 text-[11px]" style={{ color: tokens.mutedForeground }}>
+            <div className="text-center py-6 text-[11px] text-muted-foreground">
               {isDiscovering ? "Scanning for agents…" : "No agents found"}
             </div>
           )}
@@ -148,29 +122,20 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
 
         {/* Footer */}
         <div
-          className="flex items-center gap-2 px-3 py-2 border-t"
-          style={{ borderColor: tokens.border }}
+          className="flex items-center gap-2 px-3 py-2 border-t border-border"
         >
           {!showCustom ? (
             <>
               <button
                 onClick={() => setShowCustom(true)}
-                className="px-3 py-1 text-[10px] rounded border transition-colors"
-                style={{
-                  borderColor: tokens.border,
-                  color: tokens.mutedForeground,
-                }}
+                className="px-3 py-1 text-[10px] rounded border border-border text-muted-foreground transition-colors"
               >
                 Add custom…
               </button>
               <button
                 onClick={discover}
                 disabled={isDiscovering}
-                className="px-3 py-1 text-[10px] rounded transition-colors"
-                style={{
-                  backgroundColor: tokens.neonCyan,
-                  color: tokens.background,
-                }}
+                className="px-3 py-1 text-[10px] rounded bg-neon-cyan text-background transition-colors"
               >
                 {isDiscovering ? "Scanning…" : "Re-scan"}
               </button>
@@ -182,35 +147,25 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
                 placeholder="Agent name"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                className="w-full h-7 px-2 text-[11px] rounded border bg-transparent"
-                style={{ borderColor: tokens.border, color: tokens.foreground }}
+                className="w-full h-7 px-2 text-[11px] rounded border border-border bg-transparent text-foreground"
               />
               <input
                 type="text"
                 placeholder="Binary path (e.g. /usr/local/bin/claude)"
                 value={customBinary}
                 onChange={(e) => setCustomBinary(e.target.value)}
-                className="w-full h-7 px-2 text-[11px] rounded border bg-transparent font-mono"
-                style={{ borderColor: tokens.border, color: tokens.foreground }}
+                className="w-full h-7 px-2 text-[11px] rounded border border-border bg-transparent text-foreground font-mono"
               />
               <div className="flex gap-2">
                 <button
                   onClick={handleCustomAdd}
-                  className="px-3 py-1 text-[10px] rounded transition-colors"
-                  style={{
-                    backgroundColor: tokens.neonCyan,
-                    color: tokens.background,
-                  }}
+                  className="px-3 py-1 text-[10px] rounded bg-neon-cyan text-background transition-colors"
                 >
                   Add
                 </button>
                 <button
                   onClick={() => setShowCustom(false)}
-                  className="px-3 py-1 text-[10px] rounded border transition-colors"
-                  style={{
-                    borderColor: tokens.border,
-                    color: tokens.mutedForeground,
-                  }}
+                  className="px-3 py-1 text-[10px] rounded border border-border text-muted-foreground transition-colors"
                 >
                   Cancel
                 </button>

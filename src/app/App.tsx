@@ -4,7 +4,7 @@ import { FileExplorer } from "@/modules/explorer";
 import { EditorPane } from "@/modules/editor";
 import { TerminalTabs } from "@/modules/terminal";
 import { ThemeProvider } from "@/modules/theme/ThemeProvider";
-import { useTheme } from "@/modules/theme/useTheme";
+
 import { useGlobalShortcuts } from "@/modules/shortcuts/hooks/useGlobalShortcuts";
 import { registerCommand } from "@/modules/shortcuts/shortcuts";
 import { openSettingsWindow } from "@/modules/settings/openSettingsWindow";
@@ -28,7 +28,6 @@ function getWorkspaceRootPath(env: WorkspaceEnv): string {
 }
 
 function AppContent() {
-  const { tokens } = useTheme();
   const { env: workspaceEnv } = useWorkspaceEnvStore();
   const workspacePath = getWorkspaceRootPath(workspaceEnv);
 
@@ -140,11 +139,7 @@ function AppContent() {
 
   return (
     <div
-      className="flex h-screen w-screen flex-col overflow-hidden font-mono"
-      style={{
-        backgroundColor: tokens.background,
-        color: tokens.foreground,
-      }}
+      className="flex h-screen w-screen flex-col overflow-hidden font-mono bg-background text-foreground"
     >
       {!zenMode && (
         <WindowChrome
@@ -158,8 +153,7 @@ function AppContent() {
       <div className="flex flex-1 min-h-0">
         {showExplorer && !zenMode && (
           <aside
-            className="w-56 shrink-0 border-r flex flex-col overflow-hidden"
-            style={{ borderColor: tokens.border }}
+            className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden"
           >
             <FileExplorer
               rootPath={workspacePath}
@@ -171,28 +165,17 @@ function AppContent() {
         <main className="flex-1 flex flex-col min-w-0">
           {openFiles.length > 0 && !zenMode && (
             <div
-              className="flex items-center h-8 shrink-0 border-b overflow-x-auto no-scrollbar"
-              style={{ borderColor: tokens.border, backgroundColor: tokens.muted }}
+              className="flex items-center h-8 shrink-0 border-b border-border bg-muted overflow-x-auto no-scrollbar"
             >
               {openFiles.map((file) => (
                 <button
                   key={file.path}
                   onClick={() => setActiveFilePath(file.path)}
-                  className="flex items-center gap-1.5 px-3 h-8 text-[10px] shrink-0 transition-colors select-none"
-                  style={{
-                    backgroundColor:
-                      file.path === activeFilePath
-                        ? tokens.card
-                        : "transparent",
-                    color:
-                      file.path === activeFilePath
-                        ? tokens.foreground
-                        : tokens.mutedForeground,
-                    borderTop:
-                      file.path === activeFilePath
-                        ? `2px solid ${tokens.neonCyan}`
-                        : "2px solid transparent",
-                  }}
+                  className={`flex items-center gap-1.5 px-3 h-8 text-[10px] shrink-0 transition-colors select-none ${
+                    file.path === activeFilePath
+                      ? "bg-card text-foreground border-t-2 border-t-neon-cyan"
+                      : "bg-transparent text-muted-foreground border-t-2 border-t-transparent"
+                  }`}
                 >
                   <span>{file.name}</span>
                   <span
@@ -200,8 +183,7 @@ function AppContent() {
                       e.stopPropagation();
                       closeFile(file.path);
                     }}
-                    className="ml-1 opacity-0 hover:opacity-100 cursor-pointer"
-                    style={{ color: tokens.mutedForeground }}
+                    className="ml-1 opacity-0 hover:opacity-100 cursor-pointer text-muted-foreground"
                   >
                     ×
                   </span>
@@ -214,15 +196,10 @@ function AppContent() {
             {activeFilePath ? (
               <EditorPane filePath={activeFilePath} />
             ) : (
-              <div
-                className="flex items-center justify-center h-full"
-                style={{ color: tokens.mutedForeground }}
+              <div className="flex items-center justify-center h-full text-muted-foreground"
               >
                 <div className="text-center space-y-3">
-                  <div
-                    className="font-bold text-lg"
-                    style={{ color: tokens.neonCyan }}
-                  >
+                  <div className="font-bold text-lg text-neon-cyan">
                     ANTLER CODER
                   </div>
                   <div className="opacity-60">v0.1.0 — Universal Agent Shell</div>
@@ -237,8 +214,7 @@ function AppContent() {
 
           {showTerminal && !zenMode && (
             <div
-              className="h-48 shrink-0 border-t"
-              style={{ borderColor: tokens.border }}
+              className="h-48 shrink-0 border-t border-border"
             >
               <TerminalTabs defaultCwd={workspacePath} />
             </div>
@@ -248,16 +224,11 @@ function AppContent() {
 
       {!zenMode && (
         <footer
-          className="h-6 shrink-0 border-t flex items-center px-3 gap-4 text-[10px]"
-          style={{
-            borderColor: tokens.border,
-            backgroundColor: tokens.muted,
-            color: tokens.mutedForeground,
-          }}
+          className="h-6 shrink-0 border-t border-border bg-muted text-muted-foreground flex items-center px-3 gap-4 text-[10px]"
         >
           <WorkspacePicker />
-          <span className="w-px h-3" style={{ backgroundColor: tokens.border }} />
-          <span style={{ color: tokens.neonCyan }}>
+          <span className="w-px h-3 bg-border" />
+          <span className="text-neon-cyan">
             {activeFilePath ? activeFilePath.split("/").pop() : "READY"}
           </span>
           <span className="flex-1" />

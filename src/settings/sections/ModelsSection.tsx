@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { usePreferencesStore, type ProviderConfig } from "@/modules/settings/preferences";
-import { useTheme } from "@/modules/theme/useTheme";
+
 
 const BUILTIN_PROVIDERS: Omit<ProviderConfig, "apiKey">[] = [
   { id: "openai", name: "OpenAI", baseUrl: "https://api.openai.com/v1", modelId: "gpt-4o-mini" },
@@ -13,7 +13,6 @@ const BUILTIN_PROVIDERS: Omit<ProviderConfig, "apiKey">[] = [
 ];
 
 export function ModelsSection() {
-  const { tokens } = useTheme();
   const { autocompleteProvider, setAutocompleteProvider } = usePreferencesStore();
   const [selectedProvider, setSelectedProvider] = useState<string>(autocompleteProvider?.id ?? "");
   const [apiKey, setApiKey] = useState("");
@@ -56,17 +55,17 @@ export function ModelsSection() {
 
   return (
     <div className="flex flex-col gap-6 max-w-lg">
-      <h2 className="text-[14px] font-semibold" style={{ color: tokens.neonCyan }}>
+      <h2 className="text-[14px] font-semibold text-neon-cyan">
         Models
       </h2>
 
-      <p className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+      <p className="text-[11px] text-muted-foreground">
         Configure your AI provider for inline editor autocomplete. Your API key is stored in your OS keyring.
       </p>
 
       {/* Provider selector */}
       <div className="flex flex-col gap-2">
-        <label className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+        <label className="text-[11px] text-muted-foreground">
           Provider
         </label>
         <div className="flex flex-col gap-1">
@@ -74,18 +73,16 @@ export function ModelsSection() {
             <button
               key={provider.id}
               onClick={() => setSelectedProvider(provider.id)}
-              className="flex items-center gap-2 px-3 py-2 text-[11px] rounded border transition-colors text-left"
-              style={{
-                borderColor: selectedProvider === provider.id ? tokens.neonCyan : tokens.border,
-                backgroundColor: selectedProvider === provider.id ? `${tokens.neonCyan}10` : "transparent",
-                color: tokens.foreground,
-              }}
+              className={`flex items-center gap-2 px-3 py-2 text-[11px] rounded border transition-colors text-left text-foreground ${
+                selectedProvider === provider.id
+                  ? "border-neon-cyan bg-neon-cyan/10"
+                  : "border-border bg-transparent"
+              }`}
             >
               <span
-                className="w-2 h-2 rounded-full"
-                style={{
-                  backgroundColor: selectedProvider === provider.id ? tokens.neonCyan : tokens.border,
-                }}
+                className={`w-2 h-2 rounded-full ${
+                  selectedProvider === provider.id ? "bg-neon-cyan" : "bg-border"
+                }`}
               />
               <span>{provider.name}</span>
               <span className="ml-auto text-[10px] opacity-50">{provider.baseUrl}</span>
@@ -93,18 +90,14 @@ export function ModelsSection() {
           ))}
           <button
             onClick={() => setSelectedProvider("custom")}
-            className="flex items-center gap-2 px-3 py-2 text-[11px] rounded border transition-colors text-left"
-            style={{
-              borderColor: selectedProvider === "custom" ? tokens.neonCyan : tokens.border,
-              backgroundColor: selectedProvider === "custom" ? `${tokens.neonCyan}10` : "transparent",
-              color: tokens.foreground,
-            }}
+            className={`flex items-center gap-2 px-3 py-2 text-[11px] rounded border transition-colors text-left text-foreground ${
+              selectedProvider === "custom"
+                ? "border-neon-cyan bg-neon-cyan/10"
+                : "border-border bg-transparent"
+            }`}
           >
             <span
-              className="w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: selectedProvider === "custom" ? tokens.neonCyan : tokens.border,
-              }}
+              className={`w-2 h-2 rounded-full ${selectedProvider === "custom" ? "bg-neon-cyan" : "bg-border"}`}
             />
             <span>OpenAI-compatible (custom)</span>
           </button>
@@ -113,7 +106,7 @@ export function ModelsSection() {
 
       {/* API Key */}
       <div className="flex flex-col gap-2">
-        <label className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+        <label className="text-[11px] text-muted-foreground">
           API Key
         </label>
         <input
@@ -121,10 +114,9 @@ export function ModelsSection() {
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
           placeholder="sk-... (leave empty for local models)"
-          className="w-full h-8 px-3 text-[11px] rounded border bg-transparent font-mono"
-          style={{ borderColor: tokens.border, color: tokens.foreground }}
+          className="w-full h-8 px-3 text-[11px] rounded border border-border bg-transparent font-mono text-foreground"
         />
-        <span className="text-[10px]" style={{ color: tokens.mutedForeground }}>
+        <span className="text-[10px] text-muted-foreground">
           Stored in OS keyring. Never written to disk.
         </span>
       </div>
@@ -133,7 +125,7 @@ export function ModelsSection() {
       {selectedProvider === "custom" && (
         <>
           <div className="flex flex-col gap-2">
-            <label className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+            <label className="text-[11px] text-muted-foreground">
               Base URL
             </label>
             <input
@@ -141,12 +133,11 @@ export function ModelsSection() {
               value={customUrl}
               onChange={(e) => setCustomUrl(e.target.value)}
               placeholder="http://localhost:1234/v1"
-              className="w-full h-8 px-3 text-[11px] rounded border bg-transparent font-mono"
-              style={{ borderColor: tokens.border, color: tokens.foreground }}
+              className="w-full h-8 px-3 text-[11px] rounded border border-border bg-transparent font-mono text-foreground"
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+            <label className="text-[11px] text-muted-foreground">
               Model ID
             </label>
             <input
@@ -154,8 +145,7 @@ export function ModelsSection() {
               value={customModel}
               onChange={(e) => setCustomModel(e.target.value)}
               placeholder="e.g. qwen2.5-coder-7b-instruct"
-              className="w-full h-8 px-3 text-[11px] rounded border bg-transparent font-mono"
-              style={{ borderColor: tokens.border, color: tokens.foreground }}
+              className="w-full h-8 px-3 text-[11px] rounded border border-border bg-transparent font-mono text-foreground"
             />
           </div>
         </>
@@ -165,16 +155,12 @@ export function ModelsSection() {
       <div className="flex items-center gap-3">
         <button
           onClick={handleSave}
-          className="px-4 py-1.5 text-[11px] rounded transition-colors"
-          style={{
-            backgroundColor: tokens.neonCyan,
-            color: tokens.background,
-          }}
+          className="px-4 py-1.5 text-[11px] rounded bg-neon-cyan text-background transition-colors"
         >
           Save
         </button>
         {saved && (
-          <span className="text-[11px]" style={{ color: tokens.neonGreen }}>
+          <span className="text-[11px] text-green-400">
             Saved
           </span>
         )}

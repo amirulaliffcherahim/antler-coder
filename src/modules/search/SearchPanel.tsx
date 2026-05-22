@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { useTheme } from "@/modules/theme/useTheme";
+
 import { useWorkspaceEnvStore } from "@/modules/workspace";
 
 interface SearchResult {
@@ -17,7 +17,7 @@ interface SearchPanelProps {
 }
 
 export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelProps) {
-  const { tokens } = useTheme();
+
   const { env } = useWorkspaceEnvStore();
   const rootPath = env.kind === "local" ? env.rootPath : "/";
 
@@ -72,19 +72,14 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
       onClick={onClose}
     >
       <div
-        className="w-[44rem] max-h-[32rem] flex flex-col rounded border shadow-2xl overflow-hidden"
-        style={{
-          backgroundColor: tokens.card,
-          borderColor: tokens.border,
-        }}
+        className="w-[44rem] max-h-[32rem] flex flex-col rounded border border-border shadow-2xl overflow-hidden bg-card"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search input */}
         <div
-          className="flex items-center gap-2 px-3 py-2.5 border-b"
-          style={{ borderColor: tokens.border }}
+          className="flex items-center gap-2 px-3 py-2.5 border-b border-border"
         >
-          <span style={{ color: tokens.mutedForeground }}>🔍</span>
+          <span className="text-muted-foreground">🔍</span>
           <input
             ref={inputRef}
             type="text"
@@ -92,25 +87,19 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Search files..."
-            className="flex-1 bg-transparent text-[12px] outline-none"
-            style={{ color: tokens.foreground }}
+            className="flex-1 bg-transparent text-[12px] outline-none text-foreground"
           />
           <button
             onClick={runSearch}
             disabled={searching || !query.trim()}
-            className="px-2 py-0.5 text-[10px] rounded transition-colors"
-            style={{
-              backgroundColor: tokens.neonCyan,
-              color: tokens.background,
-              opacity: searching || !query.trim() ? 0.5 : 1,
-            }}
+            className="px-2 py-0.5 text-[10px] rounded transition-colors bg-neon-cyan text-background"
+            style={{ opacity: searching || !query.trim() ? 0.5 : 1 }}
           >
             {searching ? "…" : "Search"}
           </button>
           <button
             onClick={onClose}
-            className="text-[12px] px-1"
-            style={{ color: tokens.mutedForeground }}
+            className="text-[12px] px-1 text-muted-foreground"
           >
             ×
           </button>
@@ -118,23 +107,20 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
 
         {/* Options */}
         <div
-          className="flex items-center gap-3 px-3 py-1.5 border-b"
-          style={{ borderColor: tokens.border }}
+          className="flex items-center gap-3 px-3 py-1.5 border-b border-border"
         >
           <ToggleOption
             label="Regex"
             checked={regex}
             onChange={setRegex}
-            tokens={tokens}
           />
           <ToggleOption
             label="Case sensitive"
             checked={caseSensitive}
             onChange={setCaseSensitive}
-            tokens={tokens}
           />
           <span className="flex-1" />
-          <span className="text-[10px]" style={{ color: tokens.mutedForeground }}>
+          <span className="text-[10px] text-muted-foreground">
             {results.length > 0 ? `${results.length} results` : ""}
           </span>
         </div>
@@ -143,8 +129,7 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
         <div className="flex-1 overflow-y-auto">
           {results.length === 0 && !searching && query && (
             <div
-              className="text-center py-8 text-[11px]"
-              style={{ color: tokens.mutedForeground }}
+            className="text-center py-8 text-[11px] text-muted-foreground"
             >
               No results found
             </div>
@@ -156,34 +141,23 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
                 onFileClick(result.path);
                 onClose();
               }}
-              className="flex flex-col w-full px-3 py-1.5 text-left transition-colors"
-              style={{
-                borderBottom: `1px solid ${tokens.border}`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = tokens.accent;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
+              className="flex flex-col w-full px-3 py-1.5 text-left transition-colors border-b border-border hover:bg-accent"
             >
               <div className="flex items-center gap-2">
                 <span
-                  className="text-[10px] truncate max-w-[16rem]"
-                  style={{ color: tokens.neonCyan }}
+                  className="text-[10px] truncate max-w-[16rem] text-neon-cyan"
                 >
                   {result.path.split("/").pop()}
                 </span>
-                <span className="text-[10px]" style={{ color: tokens.mutedForeground }}>
+                <span className="text-[10px] text-muted-foreground">
                   {result.path}
                 </span>
-                <span className="ml-auto text-[10px]" style={{ color: tokens.mutedForeground }}>
+                <span className="ml-auto text-[10px] text-muted-foreground">
                   :{result.line}:{result.column}
                 </span>
               </div>
               <div
-                className="text-[11px] truncate mt-0.5 font-mono"
-                style={{ color: tokens.foreground }}
+                className="text-[11px] truncate mt-0.5 font-mono text-foreground"
               >
                 {result.text}
               </div>
@@ -199,27 +173,20 @@ function ToggleOption({
   label,
   checked,
   onChange,
-  tokens,
 }: {
   label: string;
   checked: boolean;
   onChange: (v: boolean) => void;
-  tokens: { mutedForeground: string; neonCyan: string; background: string };
 }) {
   return (
     <button
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-1 text-[10px] transition-colors"
-      style={{ color: checked ? tokens.neonCyan : tokens.mutedForeground }}
+      className={`flex items-center gap-1 text-[10px] transition-colors ${checked ? "text-neon-cyan" : "text-muted-foreground"}`}
     >
       <span
-        className="w-2.5 h-2.5 rounded-sm border flex items-center justify-center"
-        style={{
-          borderColor: checked ? tokens.neonCyan : tokens.mutedForeground,
-          backgroundColor: checked ? tokens.neonCyan : "transparent",
-        }}
+        className={`w-2.5 h-2.5 rounded-sm border flex items-center justify-center ${checked ? "border-neon-cyan bg-neon-cyan" : "border-muted-foreground"}`}
       >
-        {checked && <span className="text-[8px]" style={{ color: tokens.background }}>✓</span>}
+        {checked && <span className="text-[8px] text-background">✓</span>}
       </span>
       {label}
     </button>

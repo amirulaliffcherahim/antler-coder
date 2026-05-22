@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "@/modules/theme/useTheme";
+
 import { useWorkspaceEnvStore } from "@/modules/workspace";
 import { useAgentDiscovery } from "@/modules/agent-shell";
 
@@ -10,7 +10,7 @@ interface OnboardingWizardProps {
 type Step = "welcome" | "workspace" | "agents" | "done";
 
 export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
-  const { tokens } = useTheme();
+
   const { env: workspaceEnv, setEnv } = useWorkspaceEnvStore();
   const { discover, isDiscovering, discovered } = useAgentDiscovery(workspaceEnv);
   const [step, setStep] = useState<Step>("welcome");
@@ -29,35 +29,33 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
-      style={{ backgroundColor: tokens.background }}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background"
     >
       <div className="w-[32rem] flex flex-col gap-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="text-[28px] font-bold" style={{ color: tokens.neonCyan }}>
+          <div className="text-[28px] font-bold text-neon-cyan">
             ANTLER CODER
           </div>
-          <div className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+          <div className="text-[11px] text-muted-foreground">
             Universal Agent Shell
           </div>
         </div>
 
         {/* Step content */}
         <div
-          className="rounded border p-6 space-y-4"
-          style={{ borderColor: tokens.border, backgroundColor: tokens.card }}
+          className="rounded border border-border p-6 space-y-4 bg-card"
         >
           {step === "welcome" && (
             <>
-              <h2 className="text-[14px] font-semibold" style={{ color: tokens.foreground }}>
+              <h2 className="text-[14px] font-semibold text-foreground">
                 Welcome
               </h2>
-              <p className="text-[11px] leading-relaxed" style={{ color: tokens.mutedForeground }}>
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
                 Antler Coder is a developer environment for hosting external AI agents.
                 Bring your own agent (Claude, Gemini, Aider, etc.) and your own API key.
               </p>
-              <div className="flex flex-col gap-1.5 text-[10px]" style={{ color: tokens.mutedForeground }}>
+              <div className="flex flex-col gap-1.5 text-[10px] text-muted-foreground">
                 <div>• Space+e — Explorer</div>
                 <div>• Space+t — Terminal</div>
                 <div>• Space+a — Agent popup</div>
@@ -65,11 +63,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
               </div>
               <button
                 onClick={() => setStep("workspace")}
-                className="w-full py-1.5 text-[11px] rounded transition-colors"
-                style={{
-                  backgroundColor: tokens.neonCyan,
-                  color: tokens.background,
-                }}
+                className="w-full py-1.5 text-[11px] rounded transition-colors bg-neon-cyan text-background"
               >
                 Get started
               </button>
@@ -78,27 +72,22 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
           {step === "workspace" && (
             <>
-              <h2 className="text-[14px] font-semibold" style={{ color: tokens.foreground }}>
+              <h2 className="text-[14px] font-semibold text-foreground">
                 Choose workspace
               </h2>
-              <p className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+              <p className="text-[11px] text-muted-foreground">
                 Set your default project directory.
               </p>
               <input
                 type="text"
                 value={workspacePath}
                 onChange={(e) => setWorkspacePath(e.target.value)}
-                className="w-full h-8 px-3 text-[11px] rounded border bg-transparent font-mono"
-                style={{ borderColor: tokens.border, color: tokens.foreground }}
+                className="w-full h-8 px-3 text-[11px] rounded border border-border bg-transparent font-mono text-foreground"
               />
               <div className="flex gap-2">
                 <button
                   onClick={handleWorkspaceConfirm}
-                  className="flex-1 py-1.5 text-[11px] rounded transition-colors"
-                  style={{
-                    backgroundColor: tokens.neonCyan,
-                    color: tokens.background,
-                  }}
+                  className="flex-1 py-1.5 text-[11px] rounded transition-colors bg-neon-cyan text-background"
                 >
                   Continue
                 </button>
@@ -108,15 +97,15 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
           {step === "agents" && (
             <>
-              <h2 className="text-[14px] font-semibold" style={{ color: tokens.foreground }}>
+              <h2 className="text-[14px] font-semibold text-foreground">
                 Scan for agents
               </h2>
-              <p className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+              <p className="text-[11px] text-muted-foreground">
                 Looking for installed CLI agents on your system…
               </p>
 
               {isDiscovering ? (
-                <div className="flex items-center gap-2 text-[11px]" style={{ color: tokens.mutedForeground }}>
+                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
                   <span className="animate-pulse">Scanning PATH…</span>
                 </div>
               ) : discovered.length > 0 ? (
@@ -124,19 +113,18 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                   {discovered.map((agent) => (
                     <div
                       key={agent.id}
-                      className="flex items-center gap-2 px-2 py-1 text-[11px] rounded"
-                      style={{ backgroundColor: tokens.muted }}
+                      className="flex items-center gap-2 px-2 py-1 text-[11px] rounded bg-muted"
                     >
-                      <span style={{ color: tokens.neonGreen }}>✓</span>
-                      <span style={{ color: tokens.foreground }}>{agent.name}</span>
-                      <span className="ml-auto text-[10px]" style={{ color: tokens.mutedForeground }}>
+                      <span className="text-neon-green">✓</span>
+                      <span className="text-foreground">{agent.name}</span>
+                      <span className="ml-auto text-[10px] text-muted-foreground">
                         {agent.path}
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+                <div className="text-[11px] text-muted-foreground">
                   No agents found. You can add them later in Settings → Agents.
                 </div>
               )}
@@ -144,12 +132,8 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
               <button
                 onClick={() => setStep("done")}
                 disabled={isDiscovering}
-                className="w-full py-1.5 text-[11px] rounded transition-colors"
-                style={{
-                  backgroundColor: tokens.neonCyan,
-                  color: tokens.background,
-                  opacity: isDiscovering ? 0.5 : 1,
-                }}
+                className="w-full py-1.5 text-[11px] rounded transition-colors bg-neon-cyan text-background"
+                style={{ opacity: isDiscovering ? 0.5 : 1 }}
               >
                 Continue
               </button>
@@ -158,23 +142,19 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
           {step === "done" && (
             <>
-              <h2 className="text-[14px] font-semibold" style={{ color: tokens.foreground }}>
+              <h2 className="text-[14px] font-semibold text-foreground">
                 You&apos;re all set
               </h2>
-              <p className="text-[11px]" style={{ color: tokens.mutedForeground }}>
+              <p className="text-[11px] text-muted-foreground">
                 Workspace configured, agents scanned. Ready to code.
               </p>
-              <div className="text-[10px] space-y-1" style={{ color: tokens.mutedForeground }}>
+              <div className="text-[10px] space-y-1 text-muted-foreground">
                 <div>Space+a to open your agent</div>
                 <div>Space+, to configure models and keys</div>
               </div>
               <button
                 onClick={onComplete}
-                className="w-full py-1.5 text-[11px] rounded transition-colors"
-                style={{
-                  backgroundColor: tokens.neonCyan,
-                  color: tokens.background,
-                }}
+                className="w-full py-1.5 text-[11px] rounded transition-colors bg-neon-cyan text-background"
               >
                 Start coding
               </button>
@@ -187,11 +167,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
           {(["welcome", "workspace", "agents", "done"] as Step[]).map((s) => (
             <span
               key={s}
-              className="w-1.5 h-1.5 rounded-full transition-colors"
-              style={{
-                backgroundColor:
-                  step === s ? tokens.neonCyan : tokens.border,
-              }}
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${step === s ? "bg-neon-cyan" : "bg-border"}`}
             />
           ))}
         </div>

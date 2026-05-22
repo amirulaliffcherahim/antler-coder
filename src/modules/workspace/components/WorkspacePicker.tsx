@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "@/modules/theme/useTheme";
+
 import { useWorkspaceEnvStore } from "../env";
 
 export default function WorkspacePicker() {
-  const { tokens } = useTheme();
+
   const { env, distros, isWslAvailable, setEnv, refreshDistros } =
     useWorkspaceEnvStore();
   const [open, setOpen] = useState(false);
@@ -31,19 +31,10 @@ export default function WorkspacePicker() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1 px-2 py-0.5 text-[10px] rounded transition-colors"
-        style={{
-          backgroundColor: tokens.muted,
-          color: tokens.mutedForeground,
-          border: `1px solid ${tokens.border}`,
-        }}
+        className="flex items-center gap-1 px-2 py-0.5 text-[10px] rounded transition-colors bg-muted text-muted-foreground border border-border"
       >
         <span
-          className="w-1.5 h-1.5 rounded-full"
-          style={{
-            backgroundColor:
-              env.kind === "local" ? tokens.neonCyan : tokens.neonGreen,
-          }}
+          className={`w-1.5 h-1.5 rounded-full ${env.kind === "local" ? "bg-neon-cyan" : "bg-neon-green"}`}
         />
         <span>{label}</span>
         <span className="opacity-50">▾</span>
@@ -56,15 +47,10 @@ export default function WorkspacePicker() {
             onClick={() => setOpen(false)}
           />
           <div
-            className="absolute top-full left-0 mt-1 w-48 rounded border shadow-xl z-[80] overflow-hidden"
-            style={{
-              backgroundColor: tokens.card,
-              borderColor: tokens.border,
-            }}
+            className="absolute top-full left-0 mt-1 w-48 rounded border border-border shadow-xl z-[80] overflow-hidden bg-card"
           >
             <div
-              className="px-2 py-1.5 text-[10px] uppercase tracking-wide"
-              style={{ color: tokens.mutedForeground }}
+              className="px-2 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground"
             >
               Workspace
             </div>
@@ -72,16 +58,10 @@ export default function WorkspacePicker() {
             {/* Local */}
             <button
               onClick={handleSelectLocal}
-              className="flex items-center gap-2 w-full px-2 py-1.5 text-[11px] transition-colors"
-              style={{
-                backgroundColor:
-                  env.kind === "local" ? tokens.accent : "transparent",
-                color: tokens.foreground,
-              }}
+              className={`flex items-center gap-2 w-full px-2 py-1.5 text-[11px] transition-colors text-foreground ${env.kind === "local" ? "bg-accent" : ""}`}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: tokens.neonCyan }}
+                className="w-1.5 h-1.5 rounded-full bg-neon-cyan"
               />
               <span>Local filesystem</span>
             </button>
@@ -90,12 +70,10 @@ export default function WorkspacePicker() {
             {isWslAvailable && distros.length > 0 && (
               <>
                 <div
-                  className="mx-2 my-1 h-px"
-                  style={{ backgroundColor: tokens.border }}
+                  className="mx-2 my-1 h-px bg-border"
                 />
                 <div
-                  className="px-2 py-1 text-[10px]"
-                  style={{ color: tokens.mutedForeground }}
+                  className="px-2 py-1 text-[10px] text-muted-foreground"
                 >
                   WSL distros
                 </div>
@@ -103,31 +81,15 @@ export default function WorkspacePicker() {
                   <button
                     key={distro.name}
                     onClick={() => handleSelectWsl(distro.name)}
-                    className="flex items-center gap-2 w-full px-2 py-1.5 text-[11px] transition-colors"
-                    style={{
-                      backgroundColor:
-                        env.kind === "wsl" && env.distro === distro.name
-                          ? tokens.accent
-                          : "transparent",
-                      color: tokens.foreground,
-                    }}
+                    className={`flex items-center gap-2 w-full px-2 py-1.5 text-[11px] transition-colors text-foreground ${env.kind === "wsl" && env.distro === distro.name ? "bg-accent" : ""}`}
                   >
                     <span
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{
-                        backgroundColor: distro.running
-                          ? tokens.neonGreen
-                          : tokens.mutedForeground,
-                      }}
+                      className={`w-1.5 h-1.5 rounded-full ${distro.running ? "bg-neon-green" : "bg-muted-foreground"}`}
                     />
                     <span>{distro.name}</span>
                     {distro.default && (
                       <span
-                        className="ml-auto text-[9px] px-1 rounded"
-                        style={{
-                          backgroundColor: tokens.muted,
-                          color: tokens.mutedForeground,
-                        }}
+                        className="ml-auto text-[9px] px-1 rounded bg-muted text-muted-foreground"
                       >
                         default
                       </span>
@@ -139,8 +101,7 @@ export default function WorkspacePicker() {
 
             {!isWslAvailable && (
               <div
-                className="px-2 py-2 text-[10px]"
-                style={{ color: tokens.mutedForeground }}
+                className="px-2 py-2 text-[10px] text-muted-foreground"
               >
                 WSL not available on this platform.
               </div>
