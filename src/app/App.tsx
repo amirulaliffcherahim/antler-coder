@@ -20,6 +20,9 @@ import OnboardingWizard from "@/modules/onboarding/OnboardingWizard";
 import { loadSession, saveSession, type SessionData } from "@/lib/session";
 import { useAgentShellStore } from "@/modules/agent-shell/store";
 
+// Lazy-load preview panel (react-markdown ~160 kB)
+const PreviewPanel = lazy(() => import("@/modules/preview/PreviewPanel"));
+
 interface OpenFile {
   path: string;
   name: string;
@@ -64,6 +67,8 @@ function AppContent() {
 
   const [agentPopupOpen, setAgentPopupOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     // Check if user has completed onboarding before
     try {
@@ -169,6 +174,26 @@ function AppContent() {
         window.location.reload();
       },
     });
+    registerCommand({
+      id: "toggle-preview",
+      name: "Toggle Preview",
+      description: "Toggle preview panel for Markdown files",
+      defaultBinding: "Space+p",
+      action: () => setPreviewOpen((v) => !v),
+    });
+    registerCommand({
+      id: "preview-url",
+      name: "Preview URL",
+      description: "Open a URL in the preview panel",
+      defaultBinding: "",
+      action: () => {
+        const url = window.prompt("Enter URL to preview:", "http://localhost:1420");
+        if (url) {
+          setPreviewUrl(url);
+          setPreviewOpen(true);
+        }
+      },
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilePath]);
 
@@ -261,10 +286,27 @@ function AppContent() {
                   </span>
                 </button>
               ))}
+              {/* Preview toggle */}
+              {activeFilePath && /\.md$/i.test(activeFilePath) && (
+                <button
+                  onClick={() => setPreviewOpen((v) => !v)}
+                  className={`ml-auto px-2 h-8 text-[10px] shrink-0 transition-colors ${
+                    previewOpen
+                      ? "text-neon-cyan border-l border-border bg-card"
+                      : "text-muted-foreground hover:text-foreground border-l border-border"
+                  }`}
+                  title="Toggle preview"
+                  aria-label="Toggle preview"
+                >
+                  {previewOpen ? "▸ Editor" : "◂ Preview"}
+                </button>
+              )}
             </div>
           )}
 
-          <div className="flex-1 min-h-0 relative">
+          <div className="flex-1 flex min-h-0">
+            {/* Editor column */}
+            <div className="flex-1 flex flex-col min-w-0">
             {activeFilePath ? (
               <Suspense fallback={
                 <div className="flex items-center justify-center h-full">
@@ -292,30 +334,48 @@ function AppContent() {
                 </div>
               </div>
             )}
-          </div>
 
-          {showTerminal && !zenMode && !isShort && (
-            <PanelSplitter orientation="horizontal" onMouseDown={terminalDrag.onMouseDown} />
-          )}
-          {showTerminal && !zenMode && !isShort && (
-            <div
-              className="shrink-0 border-t border-border"
-              style={{ height: terminalPx }}
-            >
+            {showTerminal && !zenMode && !isShort && (
+              <PanelSplitter orientation="horizontal" onMouseDown={terminalDrag.onMouseDown} />
+            )}
+            {showTerminal && !zenMode && !isShort && (
+              <div
+                className="shrink-0 border-t border-border"
+                style={{ height: terminalPx }}
+              >
+                <Suspense fallback={
+                  <div className="h-full flex items-center justify-center text-muted-foreground text-[10px]">
+                    Loading terminal…
+                  </div>
+                }>
+                  <TerminalTabs
+                    defaultCwd={workspacePath}
+                    initialTabs={terminalState?.tabs}
+                    initialActiveId={terminalState?.activeId}
+                    onSessionChange={(tabs, activeId) => setTerminalState({ tabs, activeId })}
+                  />
+                </Suspense>
+              </div>
+            )}
+            </div>
+
+          {/* Preview panel */}
+          {previewOpen && !zenMode && (
+            <div className="w-96 shrink-0 border-l border-border flex flex-col">
               <Suspense fallback={
-                <div className="h-full flex items-center justify-center text-muted-foreground text-[10px]">
-                  Loading terminal…
+                <div className="flex items-center justify-center h-full text-muted-foreground text-[11px]">
+                  Loading preview…
                 </div>
               }>
-                <TerminalTabs
-                  defaultCwd={workspacePath}
-                  initialTabs={terminalState?.tabs}
-                  initialActiveId={terminalState?.activeId}
-                  onSessionChange={(tabs, activeId) => setTerminalState({ tabs, activeId })}
+                <PreviewPanel
+                  filePath={activeFilePath}
+                  previewUrl={previewUrl}
+                  onClose={() => { setPreviewOpen(false); setPreviewUrl(null); }}
                 />
               </Suspense>
             </div>
           )}
+          </div>
         </main>
       </div>
 
