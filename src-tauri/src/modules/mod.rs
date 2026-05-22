@@ -1,0 +1,9 @@
+pub mod agent_shell;
+pub mod fs;
+pub mod git;
+pub mod search;
+pub mod secrets;
+pub mod shell;
+pub mod updater;
+pub mod watcher;
+pub mod workspace;
