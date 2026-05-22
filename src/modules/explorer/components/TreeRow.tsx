@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { getFileIcon } from "../lib/fileIcons";
 import type { DirEntry } from "../lib/useFileTree";
 
@@ -12,7 +12,7 @@ interface TreeRowProps {
   onFileClick: (path: string) => void;
 }
 
-export default function TreeRow({
+const TreeRow = memo(function TreeRow({
   entry,
   depth = 0,
   entries,
@@ -83,4 +83,6 @@ export default function TreeRow({
       )}
     </div>
   );
-}
+});
+
+export default TreeRow;

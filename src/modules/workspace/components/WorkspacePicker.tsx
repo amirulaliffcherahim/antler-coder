@@ -4,8 +4,11 @@ import { useWorkspaceEnvStore } from "../env";
 
 export default function WorkspacePicker() {
 
-  const { env, distros, isWslAvailable, setEnv, refreshDistros } =
-    useWorkspaceEnvStore();
+  const env = useWorkspaceEnvStore((s) => s.env);
+  const distros = useWorkspaceEnvStore((s) => s.distros);
+  const isWslAvailable = useWorkspaceEnvStore((s) => s.isWslAvailable);
+  const setEnv = useWorkspaceEnvStore((s) => s.setEnv);
+  const refreshDistros = useWorkspaceEnvStore((s) => s.refreshDistros);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

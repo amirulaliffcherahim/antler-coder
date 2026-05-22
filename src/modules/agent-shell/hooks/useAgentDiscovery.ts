@@ -10,8 +10,12 @@ function toRustWorkspace(env: WorkspaceEnv): { kind: "local" } | { kind: "wsl"; 
 }
 
 export function useAgentDiscovery(workspaceEnv: WorkspaceEnv) {
-  const { discovered, setDiscovered, isDiscovering, setIsDiscovering, configs, setConfigs } =
-    useAgentShellStore();
+  const discovered = useAgentShellStore((s) => s.discovered);
+  const setDiscovered = useAgentShellStore((s) => s.setDiscovered);
+  const isDiscovering = useAgentShellStore((s) => s.isDiscovering);
+  const setIsDiscovering = useAgentShellStore((s) => s.setIsDiscovering);
+  const configs = useAgentShellStore((s) => s.configs);
+  const setConfigs = useAgentShellStore((s) => s.setConfigs);
 
   const discover = useCallback(async () => {
     setIsDiscovering(true);

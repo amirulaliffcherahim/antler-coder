@@ -6,7 +6,10 @@ interface AgentTabBarProps {
 }
 
 export default function AgentTabBar({ onAddTab }: AgentTabBarProps) {
-  const { tabs, activeTabId, setActiveTab, closeTab } = useAgentShellStore();
+  const tabs = useAgentShellStore((s) => s.tabs);
+  const activeTabId = useAgentShellStore((s) => s.activeTabId);
+  const setActiveTab = useAgentShellStore((s) => s.setActiveTab);
+  const closeTab = useAgentShellStore((s) => s.closeTab);
 
   return (
     <div

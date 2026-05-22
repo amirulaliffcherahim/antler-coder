@@ -11,7 +11,7 @@ interface AgentPickerProps {
 }
 
 export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPickerProps) {
-  const { configs } = useAgentShellStore();
+  const configs = useAgentShellStore((s) => s.configs);
   const { discover, isDiscovering } = useAgentDiscovery(workspaceEnv);
   const [showCustom, setShowCustom] = useState(false);
   const [customName, setCustomName] = useState("");

@@ -19,7 +19,10 @@ function toRustWorkspace(env: WorkspaceEnv): { kind: "local" } | { kind: "wsl"; 
 }
 
 export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupProps) {
-  const { tabs, activeTabId, openTab, updateTabStatus } = useAgentShellStore();
+  const tabs = useAgentShellStore((s) => s.tabs);
+  const activeTabId = useAgentShellStore((s) => s.activeTabId);
+  const openTab = useAgentShellStore((s) => s.openTab);
+  const updateTabStatus = useAgentShellStore((s) => s.updateTabStatus);
   const [showPicker, setShowPicker] = useState(false);
 
   const spawnAgent = useCallback(
