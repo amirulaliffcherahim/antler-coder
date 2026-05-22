@@ -44,6 +44,8 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
       <div
         className="w-[28rem] max-h-[32rem] flex flex-col rounded border border-border bg-card shadow-2xl overflow-hidden animate-slide-up"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
       >
         {/* Header */}
         <div

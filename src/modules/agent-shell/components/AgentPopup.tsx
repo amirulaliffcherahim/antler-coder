@@ -71,6 +71,8 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
           height: "min(36rem, calc(100vh - 6rem))",
           boxShadow: "0 24px 48px -12px rgba(0,0,0,0.6)",
         }}
+        role="dialog"
+        aria-modal="true"
       >
         {/* Header */}
         <div

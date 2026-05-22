@@ -27,6 +27,7 @@ export default function WindowChrome({
           onClick={onToggleExplorer}
           className="text-[10px] w-4 text-center hover:opacity-100 opacity-70 transition-opacity text-muted-foreground"
           title="Toggle explorer"
+          aria-label="Toggle explorer"
         >
           ≡
         </button>

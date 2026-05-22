@@ -35,5 +35,9 @@ coverage
 # Session context — AI assistant memory (do not commit)
 memory.md
 
+# Artifacts
+.rpiv/
+.antigravitycli/
+
 # OS
 Thumbs.db

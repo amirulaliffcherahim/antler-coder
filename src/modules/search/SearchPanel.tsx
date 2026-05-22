@@ -70,6 +70,8 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
       className="fixed inset-0 z-[60] flex items-start justify-center pt-24 animate-fade-in"
       style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
     >
       <div
         className="w-[44rem] max-h-[32rem] flex flex-col rounded border border-border shadow-2xl overflow-hidden bg-card animate-slide-up"
@@ -87,7 +89,7 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Search files..."
-            className="flex-1 bg-transparent text-[12px] outline-none text-foreground"
+            className="flex-1 bg-transparent text-[12px] outline-none text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
           />
           <button
             onClick={runSearch}
@@ -129,7 +131,7 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
         <div className="flex-1 overflow-y-auto">
           {results.length === 0 && !searching && query && (
             <div
-            className="text-center py-8 text-[11px] text-muted-foreground"
+            className="text-center py-8 text-[11px] text-muted-foreground animate-fade-in"
             >
               No results found
             </div>

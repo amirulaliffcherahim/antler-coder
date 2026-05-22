@@ -44,7 +44,8 @@ const TreeRow = memo(function TreeRow({
         className={cn(
           "flex items-center w-full gap-1.5 px-1 py-0.5 text-[11px] text-muted-foreground",
           "hover:text-foreground hover:bg-accent/30 transition-colors",
-          "select-none cursor-pointer"
+          "select-none cursor-pointer",
+          "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
         )}
         style={{ paddingLeft: `${depth * 12 + 4}px` }}
       >

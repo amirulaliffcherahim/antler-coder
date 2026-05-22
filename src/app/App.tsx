@@ -42,6 +42,18 @@ function AppContent() {
   const [showExplorer, setShowExplorer] = useState(true);
   const [showTerminal, setShowTerminal] = useState(true);
   const [zenMode, setZenMode] = useState(false);
+  const [isNarrow, setIsNarrow] = useState(window.innerWidth < 600);
+  const [isShort, setIsShort] = useState(window.innerHeight < 400);
+
+  useEffect(() => {
+    const onResize = () => {
+      setIsNarrow(window.innerWidth < 600);
+      setIsShort(window.innerHeight < 400);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const [agentPopupOpen, setAgentPopupOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => {
@@ -167,7 +179,7 @@ function AppContent() {
       )}
 
       <div className="flex flex-1 min-h-0">
-        {showExplorer && !zenMode && (
+        {showExplorer && !zenMode && !isNarrow && (
           <aside
             className="shrink-0 border-r border-border flex flex-col overflow-hidden"
             style={{ width: sidebarPx }}
@@ -179,7 +191,7 @@ function AppContent() {
           </aside>
         )}
 
-        {showExplorer && !zenMode && (
+        {showExplorer && !zenMode && !isNarrow && (
           <PanelSplitter orientation="vertical" onMouseDown={sidebarDrag.onMouseDown} />
         )}
 
@@ -233,10 +245,10 @@ function AppContent() {
             )}
           </div>
 
-          {showTerminal && !zenMode && (
+          {showTerminal && !zenMode && !isShort && (
             <PanelSplitter orientation="horizontal" onMouseDown={terminalDrag.onMouseDown} />
           )}
-          {showTerminal && !zenMode && (
+          {showTerminal && !zenMode && !isShort && (
             <div
               className="shrink-0 border-t border-border"
               style={{ height: terminalPx }}

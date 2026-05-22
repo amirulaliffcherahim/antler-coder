@@ -60,14 +60,17 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Tab bar */}
-      <div className="flex items-center h-7 shrink-0 border-b border-border bg-muted/20">
+      <div className="flex items-center h-7 shrink-0 border-b border-border bg-muted/20" role="tablist">
         <div className="flex items-center flex-1 overflow-x-auto no-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveId(tab.id)}
+              role="tab"
+              aria-selected={tab.id === activeId}
               className={cn(
                 "flex items-center gap-1.5 px-3 h-7 text-[10px] shrink-0 transition-colors motion-safe:transition-all motion-safe:duration-100",
+                "focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
                 tab.id === activeId
                   ? "bg-card text-foreground border-t-2 border-t-neon-cyan"
                   : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
@@ -82,6 +85,8 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
                     closeTab(tab.id);
                   }}
                   className="ml-1 opacity-0 group-hover:opacity-100 hover:text-destructive"
+                  role="button"
+                  aria-label="Close terminal"
                 >
                   ×
                 </span>
@@ -93,6 +98,7 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
           onClick={addTab}
           className="w-7 h-7 flex items-center justify-center text-muted-foreground hover:text-foreground text-[12px] shrink-0"
           title="New terminal"
+          aria-label="New terminal"
         >
           +
         </button>

@@ -28,7 +28,7 @@ export default function FileExplorer({ rootPath, onFileClick }: FileExplorerProp
       </div>
       <div className="flex-1 overflow-auto py-1">
         {rootEntries.length === 0 ? (
-          <div className="px-2 py-4 text-[10px] text-muted-foreground/50 text-center">
+          <div className="px-2 py-4 text-[10px] text-muted-foreground/50 text-center animate-fade-in">
             {loading.has(rootPath) ? "Loading…" : "Empty directory"}
           </div>
         ) : (
