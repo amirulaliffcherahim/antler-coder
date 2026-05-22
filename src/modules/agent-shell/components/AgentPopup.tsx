@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { invoke, Channel } from "@tauri-apps/api/core";
 import { useAgentShellStore } from "../store";
 import type { ExternalAgentConfig } from "../lib/types";
 import type { WorkspaceEnv } from "@/modules/workspace";
@@ -28,6 +28,11 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
   const spawnAgent = useCallback(
     async (config: ExternalAgentConfig) => {
       try {
+        const onExit = new Channel<number>();
+        onExit.onmessage = (code) => {
+          console.log(`Agent exited with code ${code}`);
+        };
+
         const ptyId = await invoke<number>("agent_pty_open", {
           command: config.binary,
           args: config.args,
@@ -37,27 +42,16 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
           cols: 80,
           rows: 24,
           onData: null,
-          onExit: null,
+          onExit,
         });
 
-        const tabId = openTab(config.id, ptyId, config.name);
+        openTab(config.id, ptyId, config.name);
         setShowPicker(false);
-
-        // Monitor for exit
-        const checkInterval = setInterval(async () => {
-          try {
-            // We'll rely on the terminal's onExit for status updates
-            // This is simplified for Phase 4
-          } catch {
-            clearInterval(checkInterval);
-            updateTabStatus(tabId, "exited");
-          }
-        }, 5000);
       } catch (e) {
         console.error("Failed to spawn agent:", e);
       }
     },
-    [openTab, updateTabStatus, workspaceEnv]
+    [openTab, workspaceEnv]
   );
 
   if (!open) return null;

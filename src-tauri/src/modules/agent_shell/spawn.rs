@@ -47,7 +47,7 @@ pub async fn open_agent_pty(
     cols: u16,
     rows: u16,
     on_data: Channel<Vec<u8>>,
-    _on_exit: Channel<i32>,
+    on_exit: Channel<i32>,
 ) -> Result<u32, String> {
     let pty_system = native_pty_system();
     let pair = pty_system
@@ -67,7 +67,7 @@ pub async fn open_agent_pty(
         cmd.env(k, v);
     }
 
-    let _child = pair
+    let mut child = pair
         .slave
         .spawn_command(cmd)
         .map_err(|e| e.to_string())?;
@@ -97,8 +97,16 @@ pub async fn open_agent_pty(
         }
     });
 
-    // Spawn wait thread for exit
-    // (simplified for Phase 0 — proper exit notification in Phase 4)
+    // Spawn wait thread for exit notification via Channel
+    let closed_exit = closed.clone();
+    thread::spawn(move || {
+        let exit_code = match child.wait() {
+            Ok(status) => status.exit_code() as i32,
+            Err(_) => -1,
+        };
+        closed_exit.store(true, Ordering::SeqCst);
+        let _ = on_exit.send(exit_code);
+    });
 
     let id = {
         let mut next = state.next_id.lock().map_err(|e| e.to_string())?;
