@@ -62,7 +62,7 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
   return (
     <>
       <div
-        className="fixed right-4 bottom-8 z-50 flex flex-col overflow-hidden rounded border border-border bg-card shadow-2xl"
+        className="fixed right-4 bottom-8 z-50 flex flex-col overflow-hidden rounded border border-border bg-card shadow-2xl animate-slide-up"
         style={{
           width: "min(40rem, calc(100vw - 2rem))",
           height: "min(36rem, calc(100vh - 6rem))",

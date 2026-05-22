@@ -106,8 +106,12 @@ const EditorPane = forwardRef<EditorPaneHandle, EditorPaneProps>(
 
     if (loading) {
       return (
-        <div className="flex items-center justify-center h-full text-[11px] text-muted-foreground">
-          Loading {filePath.split("/").pop()}…
+        <div className="flex items-center justify-center h-full">
+          <div className="flex flex-col gap-2 w-64">
+            <div className="h-3 bg-muted rounded animate-pulse" />
+            <div className="h-3 bg-muted rounded animate-pulse w-3/4" />
+            <div className="h-3 bg-muted rounded animate-pulse w-1/2" />
+          </div>
         </div>
       );
     }

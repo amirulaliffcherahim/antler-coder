@@ -37,12 +37,12 @@ export default function AgentPicker({ onSelect, onClose, workspaceEnv }: AgentPi
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center"
+      className="fixed inset-0 z-[60] flex items-center justify-center animate-fade-in"
       style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
       onClick={onClose}
     >
       <div
-        className="w-[28rem] max-h-[32rem] flex flex-col rounded border border-border bg-card shadow-2xl overflow-hidden"
+        className="w-[28rem] max-h-[32rem] flex flex-col rounded border border-border bg-card shadow-2xl overflow-hidden animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

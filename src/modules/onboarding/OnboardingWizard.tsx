@@ -29,7 +29,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-background"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background animate-fade-in"
     >
       <div className="w-[32rem] flex flex-col gap-6">
         {/* Header */}
@@ -44,7 +44,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
         {/* Step content */}
         <div
-          className="rounded border border-border p-6 space-y-4 bg-card"
+          className="rounded border border-border p-6 space-y-4 bg-card animate-slide-up"
         >
           {step === "welcome" && (
             <>

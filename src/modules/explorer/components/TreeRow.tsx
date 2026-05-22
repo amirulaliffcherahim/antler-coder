@@ -48,7 +48,7 @@ export default function TreeRow({
         )}
         style={{ paddingLeft: `${depth * 12 + 4}px` }}
       >
-        <span className="w-3 text-center shrink-0 opacity-60">
+        <span className="w-3 text-center shrink-0 opacity-60 transition-transform duration-150">
           {entry.is_dir ? (expanded ? "▾" : "▸") : null}
         </span>
         <span className="w-3 text-center shrink-0 opacity-70">{icon}</span>
@@ -59,7 +59,7 @@ export default function TreeRow({
       </button>
 
       {expanded && children && (
-        <div>
+        <div className="animate-fade-in">
           {children.map((child) => (
             <TreeRow
               key={child.path}

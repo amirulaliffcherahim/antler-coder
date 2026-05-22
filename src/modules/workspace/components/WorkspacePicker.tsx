@@ -47,7 +47,7 @@ export default function WorkspacePicker() {
             onClick={() => setOpen(false)}
           />
           <div
-            className="absolute top-full left-0 mt-1 w-48 rounded border border-border shadow-xl z-[80] overflow-hidden bg-card"
+            className="absolute top-full left-0 mt-1 w-48 rounded border border-border shadow-xl z-[80] overflow-hidden bg-card animate-fade-in"
           >
             <div
               className="px-2 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground"

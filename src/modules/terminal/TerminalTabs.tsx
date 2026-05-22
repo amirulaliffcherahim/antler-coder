@@ -67,7 +67,7 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
               key={tab.id}
               onClick={() => setActiveId(tab.id)}
               className={cn(
-                "flex items-center gap-1.5 px-3 h-7 text-[10px] shrink-0 transition-colors",
+                "flex items-center gap-1.5 px-3 h-7 text-[10px] shrink-0 transition-colors motion-safe:transition-all motion-safe:duration-100",
                 tab.id === activeId
                   ? "bg-card text-foreground border-t-2 border-t-neon-cyan"
                   : "text-muted-foreground hover:text-foreground hover:bg-accent/20"

@@ -18,7 +18,7 @@ export default function AgentTabBar({ onAddTab }: AgentTabBarProps) {
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "flex items-center gap-1.5 px-3 h-8 text-[10px] shrink-0 transition-colors select-none",
+              "flex items-center gap-1.5 px-3 h-8 text-[10px] shrink-0 transition-colors select-none motion-safe:transition-all motion-safe:duration-100",
               tab.id === activeTabId
                 ? "bg-card text-foreground border-t-2 border-t-neon-cyan"
                 : "bg-transparent text-muted-foreground border-t-2 border-t-transparent"

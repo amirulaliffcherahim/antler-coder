@@ -217,7 +217,7 @@ function AppContent() {
             {activeFilePath ? (
               <EditorPane filePath={activeFilePath} />
             ) : (
-              <div className="flex items-center justify-center h-full text-muted-foreground"
+              <div className="flex items-center justify-center h-full text-muted-foreground animate-fade-in"
               >
                 <div className="text-center space-y-3">
                   <div className="font-bold text-lg text-neon-cyan">

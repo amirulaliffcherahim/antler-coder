@@ -67,12 +67,12 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-start justify-center pt-24"
+      className="fixed inset-0 z-[60] flex items-start justify-center pt-24 animate-fade-in"
       style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
       onClick={onClose}
     >
       <div
-        className="w-[44rem] max-h-[32rem] flex flex-col rounded border border-border shadow-2xl overflow-hidden bg-card"
+        className="w-[44rem] max-h-[32rem] flex flex-col rounded border border-border shadow-2xl overflow-hidden bg-card animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search input */}
@@ -141,7 +141,8 @@ export default function SearchPanel({ open, onClose, onFileClick }: SearchPanelP
                 onFileClick(result.path);
                 onClose();
               }}
-              className="flex flex-col w-full px-3 py-1.5 text-left transition-colors border-b border-border hover:bg-accent"
+              className="flex flex-col w-full px-3 py-1.5 text-left transition-colors border-b border-border hover:bg-accent animate-slide-up"
+              style={{ animationDelay: `${idx * 30}ms` }}
             >
               <div className="flex items-center gap-2">
                 <span
