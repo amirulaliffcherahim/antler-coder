@@ -6,6 +6,7 @@ import { TerminalTabs } from "@/modules/terminal";
 import { ThemeProvider, useTheme } from "@/modules/theme/ThemeProvider";
 import { useGlobalShortcuts } from "@/modules/shortcuts/hooks/useGlobalShortcuts";
 import { registerCommand } from "@/modules/shortcuts/shortcuts";
+import { openSettingsWindow } from "@/modules/settings/openSettingsWindow";
 
 interface OpenFile {
   path: string;
@@ -62,6 +63,13 @@ function AppContent() {
       action: () => {
         if (activeFilePath) closeFile(activeFilePath);
       },
+    });
+    registerCommand({
+      id: "settings",
+      name: "Settings",
+      description: "Open settings window",
+      defaultBinding: "Space+,",
+      action: () => void openSettingsWindow("general"),
     });
   }, [activeFilePath]);
 
