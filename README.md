@@ -9,7 +9,7 @@
 - **Shell, not agent.** Antler Coder does not reason, plan, or write code. It spawns your chosen agent in a PTY and gets out of the way.
 - **BYOA (Bring Your Own Agent).** Auto-discovers installed CLI agents. Supports custom agents via configuration.
 - **BYOK (Bring Your Own Key).** Inline editor autocomplete connects to your OpenAI-compatible endpoint or provider API key.
-- **Power-user UX.** Monospace everywhere. Vim/terminal keybindings by default. Dark neon aesthetic. Dense, keyboard-first interface.
+- **Power-user UX.** Keyboard-first with Space-prefix chords. Muted zinc/teal aesthetic. Resizable panels, zen mode.
 - **WSL-first.** Built for remote development. Agents discover and spawn inside WSL seamlessly.
 
 ## Features
@@ -18,28 +18,36 @@
 |---------|--------|
 | Multi-tab floating agent popup (PTY terminal) | ✅ |
 | Auto-discovery of CLI agents (Claude, Gemini, Aider, etc.) | ✅ |
-| Inline editor autocomplete (BYOK) | ✅ Ghost-text inline completion |
-| CodeMirror 6 editor with Vim mode | ✅ Togglable via Settings |
-| File explorer with monochrome icons | ✅ |
-| Terminal tabs (xterm.js) | ✅ |
-| Global ripgrep search | ✅ |
+| Inline editor autocomplete (BYOK) | ✅ Ghost-text via OpenAI/Anthropic |
+| CodeMirror 6 editor | ✅ Vim mode toggle, lazy language loading |
+| File explorer | ✅ Recursive tree, expand/collapse |
+| Terminal tabs | ✅ xterm.js, multi-tab, PTY I/O |
+| Drag-resizable panels | ✅ Sidebar + terminal, persisted to localStorage |
+| Global ripgrep search | ✅ With regex/case toggle |
 | Settings window | ✅ General, Models, Agents, Shortcuts, Themes, About |
 | Onboarding wizard | ✅ 4-step first-run |
-| Theme system + Zen mode | ✅ |
-| WSL integration | ✅ Distro picker, WSL PATH scan |
-| Side-by-side diff viewer | ⏳ Not implemented |
-| Web + Markdown preview | ⏳ Not implemented |
-| Session restore | ⏳ Not implemented |
+| Theme system | ✅ Zinc Dark (teal) + Zinc Blue themes |
+| WSL integration | ✅ Distro picker, WSL PATH scan, wsl.exe spawn |
+| Session restore | ✅ Files, terminals, agent tabs persisted |
+| Agent exit notification | ✅ Tauri Channel callback (no polling) |
+| Zen mode | ✅ Hides all chrome for focused editing |
+| Window controls | ✅ Min/max/close wired to Tauri API |
+| ARIA accessibility | ✅ Roles, labels, focus indicators |
+| Auto-collapse | ✅ Sidebar <600px, terminal <400px |
+| Performance | ✅ main.js 77 kB (CodeMirror/xterm lazy-loaded) |
+| Side-by-side diff viewer | ⏳ |
+| Web + Markdown preview | ⏳ |
 
 ## Tech Stack
 
-- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui + Zustand
-- **Editor:** CodeMirror 6 (with Vim mode via `@replit/codemirror-vim` + inline autocomplete)
+- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + Zustand
+- **Editor:** CodeMirror 6 (Vim mode + inline autocomplete)
 - **Terminal:** xterm.js
 - **Backend:** Tauri v2 + Rust
 - **PTY:** portable-pty
 - **Secrets:** OS keyring (keyring crate)
-- **Package Manager:** pnpm
+- **Persistence:** LazyStore (tauri-plugin-store)
+- **Animations:** CSS-only via Tailwind utilities
 
 ## Development
 
@@ -76,7 +84,7 @@ pnpm dev
 ```bash
 pnpm dev              # Frontend only — Vite dev server (port 1420)
 pnpm tauri-dev        # Full app — Vite + Tauri + Rust (recommended)
-pnpm tauri-build      # Production build — creates platform installer
+pnpm tauri-build      # Production build — creates .deb/.rpm
 pnpm build            # Frontend production build only
 pnpm lint             # ESLint check
 pnpm format           # Prettier format
@@ -101,6 +109,20 @@ export DISPLAY=:0
 # Native Linux with Wayland
 export WAYLAND_DISPLAY=wayland-0
 ```
+
+## Default Keybindings
+
+| Action | Binding |
+|--------|---------|
+| Toggle Explorer | `Space+e` |
+| Toggle Terminal | `Space+t` |
+| Agent Popup | `Space+a` |
+| Zen Mode | `Space+z` |
+| Close Tab | `Space+q` |
+| Settings | `Space+,` |
+| Search Files | `Shift+Space+f` |
+
+VS Code preset available in Settings → Shortcuts.
 
 ## License
 
