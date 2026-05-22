@@ -1,12 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { neonDark } from "./themes/neon-dark";
+import { zincDark } from "./themes/zinc-dark";
 import { applyTheme } from "./applyTheme";
 import { ThemeContext } from "./ThemeContext";
 import type { ThemeTokens, ThemeId } from "./types";
 
 const THEME_MAP: Record<ThemeId, ThemeTokens> = {
   "neon-dark": neonDark,
-  "neon-light": neonDark, // placeholder — only dark for now
+  "zinc-dark": zincDark,
 };
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

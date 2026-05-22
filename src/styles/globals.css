@@ -6,25 +6,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 92%;
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 92%;
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 92%;
-    --primary: 186 100% 50%;
-    --primary-foreground: 0 0% 4%;
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 92%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 92%;
-    --destructive: 349 100% 60%;
+    --background: 240 14% 4%;
+    --foreground: 240 6% 90%;
+    --card: 240 6% 10%;
+    --card-foreground: 240 6% 90%;
+    --popover: 240 6% 10%;
+    --popover-foreground: 240 6% 90%;
+    --primary: 173 63% 52%;
+    --primary-foreground: 240 14% 4%;
+    --secondary: 240 6% 10%;
+    --secondary-foreground: 240 6% 90%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 5% 26%;
+    --accent-foreground: 240 6% 90%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 186 100% 50%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 173 63% 52%;
     --radius: 0.25rem;
   }
 
@@ -38,8 +38,8 @@
   }
 
   ::selection {
-    background: hsl(186 100% 50% / 0.25);
-    color: hsl(0 0% 92%);
+    background: hsl(173 63% 52% / 0.3);
+    color: hsl(240 14% 4%);
   }
 
   /* Scrollbar styling */

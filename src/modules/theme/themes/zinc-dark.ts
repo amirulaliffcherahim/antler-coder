@@ -1,19 +1,18 @@
 import type { ThemeTokens } from "../types";
 
 /**
- * Muted zinc/teal dark theme.
- * Modern minimalist aesthetic (Zed/Lapce-inspired).
- * Primary accent is teal-400 for a calm, workspace-focused feel.
+ * Zinc Blue — an alternative dark theme with blue primary accent.
+ * Slightly softer borders, blue-500 accents, same zinc base.
  */
-export const neonDark: ThemeTokens = {
-  name: "Zinc Dark",
+export const zincDark: ThemeTokens = {
+  name: "Zinc Blue",
   background: "#09090b",
   foreground: "#e4e4e7",
   card: "#18181b",
   cardForeground: "#e4e4e7",
   popover: "#18181b",
   popoverForeground: "#e4e4e7",
-  primary: "#2dd4bf",
+  primary: "#3b82f6",
   primaryForeground: "#09090b",
   secondary: "#18181b",
   secondaryForeground: "#e4e4e7",
@@ -25,8 +24,8 @@ export const neonDark: ThemeTokens = {
   destructiveForeground: "#ffffff",
   border: "#27272a",
   input: "#27272a",
-  ring: "#2dd4bf",
-  neonCyan: "#2dd4bf",
+  ring: "#3b82f6",
+  neonCyan: "#3b82f6",
   neonGreen: "#34d399",
   neonAmber: "#f59e0b",
   neonRed: "#f87171",

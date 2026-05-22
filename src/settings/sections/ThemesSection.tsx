@@ -1,5 +1,33 @@
 import { useTheme } from "@/modules/theme/useTheme";
 
+interface ThemeOption {
+  id: "neon-dark" | "zinc-dark";
+  name: string;
+  description: string;
+  bg: string;
+  border: string;
+  accent: string;
+}
+
+const THEME_OPTIONS: ThemeOption[] = [
+  {
+    id: "neon-dark",
+    name: "Zinc Dark",
+    description: "Muted zinc with teal accents — calm, workspace-focused",
+    bg: "#09090b",
+    border: "#27272a",
+    accent: "#2dd4bf",
+  },
+  {
+    id: "zinc-dark",
+    name: "Zinc Blue",
+    description: "Same zinc base with blue primary accent",
+    bg: "#09090b",
+    border: "#27272a",
+    accent: "#3b82f6",
+  },
+];
+
 export function ThemesSection() {
   const { themeId, setTheme } = useTheme();
 
@@ -13,31 +41,33 @@ export function ThemesSection() {
         <label className="text-[11px] text-muted-foreground">
           Active theme
         </label>
-        <button
-          onClick={() => setTheme("neon-dark")}
-          className={`flex items-center gap-3 p-3 rounded border transition-colors text-left ${
-            themeId === "neon-dark" ? "border-neon-cyan bg-neon-cyan/10" : "border-border bg-card"
-          }`}
-        >
-          <div
-            className="w-8 h-8 rounded border"
-            style={{ backgroundColor: "#0a0a0a", borderColor: "#222" }}
+        {THEME_OPTIONS.map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => setTheme(opt.id)}
+            className={`flex items-center gap-3 p-3 rounded border transition-colors text-left ${
+              themeId === opt.id ? "border-neon-cyan bg-neon-cyan/10" : "border-border bg-card"
+            }`}
           >
-            <div className="w-2 h-2 rounded-full m-1" style={{ backgroundColor: "#00f0ff" }} />
-          </div>
-          <div>
-            <div className="text-[11px] font-medium text-foreground">
-              Neon Dark
+            <div
+              className="w-8 h-8 rounded border shrink-0"
+              style={{ backgroundColor: opt.bg, borderColor: opt.border }}
+            >
+              <div
+                className="w-2 h-2 rounded-full m-1"
+                style={{ backgroundColor: opt.accent }}
+              />
             </div>
-            <div className="text-[10px] text-muted-foreground">
-              Default hacker aesthetic
+            <div className="text-left">
+              <div className="text-[11px] font-medium text-foreground">
+                {opt.name}
+              </div>
+              <div className="text-[10px] text-muted-foreground">
+                {opt.description}
+              </div>
             </div>
-          </div>
-        </button>
-      </div>
-
-      <div className="text-[11px] text-muted-foreground">
-        More themes coming in future updates.
+          </button>
+        ))}
       </div>
     </div>
   );

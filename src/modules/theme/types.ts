@@ -26,7 +26,7 @@ export interface ThemeTokens {
   neonPurple: string;
 }
 
-export type ThemeId = "neon-dark" | "neon-light";
+export type ThemeId = "neon-dark" | "zinc-dark";
 
 export interface ThemeContextValue {
   themeId: ThemeId;
