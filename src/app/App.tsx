@@ -15,6 +15,8 @@ import { useWorkspaceEnvStore, type WorkspaceEnv } from "@/modules/workspace";
 import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
 import SearchPanel from "@/modules/search/SearchPanel";
 import OnboardingWizard from "@/modules/onboarding/OnboardingWizard";
+import { loadSession, saveSession, type SessionData } from "@/lib/session";
+import { useAgentShellStore } from "@/modules/agent-shell/store";
 
 interface OpenFile {
   path: string;
@@ -35,6 +37,10 @@ function AppContent() {
 
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFilePath, setActiveFilePath] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [terminalState, setTerminalState] = useState<{ tabs: { id: string; name: string; cwd: string }[]; activeId: string } | null>(null);
+  const agentTabs = useAgentShellStore((s) => s.tabs);
+  const activeAgentTabId = useAgentShellStore((s) => s.activeTabId);
   // Panel resize state (persisted)
   const [sidebarPx, sidebarDrag] = usePanelSize("sidebar", 224, 160, 400);
   const [terminalPx, terminalDrag] = usePanelSizeVertical("terminal", 192, 80, 600);
@@ -69,6 +75,37 @@ function AppContent() {
 
   // Register commands
   useEffect(() => {
+  // Load session on mount
+  useEffect(() => {
+    loadSession().then((s) => {
+      if (s) {
+        setOpenFiles(s.openFiles);
+        setActiveFilePath(s.activeFilePath);
+        if (s.terminalTabs.length > 0) {
+          setTerminalState({ tabs: s.terminalTabs, activeId: s.activeTerminalId });
+        }
+      }
+      setSessionReady(true);
+    });
+  }, []);
+
+  // Save session on changes (debounced via LazyStore auto-save)
+  useEffect(() => {
+    if (!sessionReady) return;
+    const timeout = setTimeout(() => {
+      const s: Omit<SessionData, "version"> = {
+        openFiles,
+        activeFilePath,
+        terminalTabs: terminalState?.tabs ?? [{ id: "t-1", name: "bash", cwd: workspacePath }],
+        activeTerminalId: terminalState?.activeId ?? "t-1",
+        agentTabs,
+        activeAgentTabId,
+      };
+      void saveSession(s as SessionData);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [openFiles, activeFilePath, terminalState, agentTabs, activeAgentTabId, sessionReady, workspacePath]);
+
     registerCommand({
       id: "toggle-explorer",
       name: "Toggle Explorer",
@@ -253,7 +290,12 @@ function AppContent() {
               className="shrink-0 border-t border-border"
               style={{ height: terminalPx }}
             >
-              <TerminalTabs defaultCwd={workspacePath} />
+              <TerminalTabs
+                defaultCwd={workspacePath}
+                initialTabs={terminalState?.tabs}
+                initialActiveId={terminalState?.activeId}
+                onSessionChange={(tabs, activeId) => setTerminalState({ tabs, activeId })}
+              />
             </div>
           )}
         </main>

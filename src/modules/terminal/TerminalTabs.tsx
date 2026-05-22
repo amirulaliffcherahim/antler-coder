@@ -10,13 +10,16 @@ interface TerminalTab {
 
 interface TerminalTabsProps {
   defaultCwd: string;
+  initialTabs?: TerminalTab[];
+  initialActiveId?: string;
+  onSessionChange?: (tabs: TerminalTab[], activeId: string) => void;
 }
 
-export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
-  const [tabs, setTabs] = useState<TerminalTab[]>([
-    { id: "t-1", name: "bash", cwd: defaultCwd },
-  ]);
-  const [activeId, setActiveId] = useState("t-1");
+export default function TerminalTabs({ defaultCwd, initialTabs, initialActiveId, onSessionChange }: TerminalTabsProps) {
+  const [tabs, setTabs] = useState<TerminalTab[]>(
+    initialTabs ?? [{ id: "t-1", name: "bash", cwd: defaultCwd }],
+  );
+  const [activeId, setActiveId] = useState(initialActiveId ?? "t-1");
   const nextId = useRef(2);
   const paneRefs = useRef<Record<string, React.RefObject<TerminalPaneHandle>>>({});
 
@@ -30,6 +33,13 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
     []
   );
 
+  const notifySessionChange = useCallback(
+    (newTabs: TerminalTab[], newActiveId: string) => {
+      onSessionChange?.(newTabs, newActiveId);
+    },
+    [onSessionChange]
+  );
+
   const addTab = useCallback(() => {
     const id = `t-${nextId.current++}`;
     const tab: TerminalTab = {
@@ -37,24 +47,31 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
       name: `bash ${nextId.current - 1}`,
       cwd: defaultCwd,
     };
-    setTabs((prev) => [...prev, tab]);
+    setTabs((prev) => {
+      const next = [...prev, tab];
+      notifySessionChange(next, id);
+      return next;
+    });
     setActiveId(id);
-  }, [defaultCwd]);
+  }, [defaultCwd, notifySessionChange]);
 
   const closeTab = useCallback(
     (id: string) => {
       setTabs((prev) => {
         if (prev.length <= 1) return prev;
         const next = prev.filter((t) => t.id !== id);
+        let newActiveId = activeId;
         if (activeId === id) {
           const idx = prev.findIndex((t) => t.id === id);
           const newActive = prev[idx === 0 ? 1 : idx - 1];
-          setActiveId(newActive.id);
+          newActiveId = newActive.id;
+          setActiveId(newActiveId);
         }
+        notifySessionChange(next, newActiveId);
         return next;
       });
     },
-    [activeId]
+    [activeId, notifySessionChange]
   );
 
   return (
@@ -65,7 +82,10 @@ export default function TerminalTabs({ defaultCwd }: TerminalTabsProps) {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveId(tab.id)}
+              onClick={() => {
+                setActiveId(tab.id);
+                onSessionChange?.(tabs, tab.id);
+              }}
               role="tab"
               aria-selected={tab.id === activeId}
               className={cn(
