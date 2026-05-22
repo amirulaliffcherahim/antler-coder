@@ -1,4 +1,5 @@
 
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
 import type { WorkspaceEnv } from "@/modules/workspace";
 
@@ -61,9 +62,15 @@ export default function WindowChrome({
 
       {/* Right: window controls */}
       <div className="flex items-center">
-        <WindowButton>─</WindowButton>
-        <WindowButton>□</WindowButton>
-        <WindowButton isClose>×</WindowButton>
+        <WindowButton onClick={() => { getCurrentWindow().minimize(); }} aria-label="Minimize">
+          ─
+        </WindowButton>
+        <WindowButton onClick={() => { getCurrentWindow().toggleMaximize(); }} aria-label="Maximize">
+          □
+        </WindowButton>
+        <WindowButton isClose onClick={() => { getCurrentWindow().close(); }} aria-label="Close">
+          ×
+        </WindowButton>
       </div>
     </header>
   );
@@ -72,12 +79,18 @@ export default function WindowChrome({
 function WindowButton({
   children,
   isClose,
+  onClick,
+  "aria-label": ariaLabel,
 }: {
   children: React.ReactNode;
   isClose?: boolean;
+  onClick?: () => void;
+  "aria-label"?: string;
 }) {
   return (
     <button
+      onClick={onClick}
+      aria-label={ariaLabel}
       className={`w-10 h-8 flex items-center justify-center text-[10px] text-muted-foreground transition-colors ${
         isClose
           ? "hover:bg-destructive hover:text-destructive-foreground"
