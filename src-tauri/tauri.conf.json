@@ -37,9 +37,6 @@
     "windows": {
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",
-      "nsis": {
-        "installerIcon": "icons/icon.ico"
-      },
       "timestampUrl": "",
       "webviewInstallMode": {
         "silent": true,
