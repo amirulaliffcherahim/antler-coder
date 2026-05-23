@@ -8,6 +8,8 @@ on:
 jobs:
   debug-windows-rust:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -20,17 +22,17 @@ jobs:
       - name: install Rust
         uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
-      - name: build frontend only
-        run: pnpm build
-        timeout-minutes: 10
       - name: check Rust
-        run: cargo check --manifest-path src-tauri/Cargo.toml
+        run: cargo check --manifest-path src-tauri/Cargo.toml 2>error.txt
+        continue-on-error: true
         timeout-minutes: 15
-      - name: build Rust release
-        run: cargo build --release --manifest-path src-tauri/Cargo.toml
-        timeout-minutes: 30
-      - name: install NSIS
-        run: choco install nsis -y
-      - name: build Tauri app
-        run: pnpm tauri build --verbose
-        timeout-minutes: 30
+      - name: commit error log
+        run: |
+          git config user.name "CI Bot"
+          git config user.email "ci@antler-coder.dev"
+          git checkout -b ci-error-logs-$(Get-Date -Format 'yyyyMMdd-HHmmss')
+          git add error.txt
+          git commit -m "ci: Windows cargo check error log"
+          git push origin HEAD
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
