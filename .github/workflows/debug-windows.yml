@@ -20,8 +20,17 @@ jobs:
       - name: install Rust
         uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
+      - name: build frontend only
+        run: pnpm build
+        timeout-minutes: 10
+      - name: check Rust
+        run: cargo check --manifest-path src-tauri/Cargo.toml
+        timeout-minutes: 15
+      - name: build Rust release
+        run: cargo build --release --manifest-path src-tauri/Cargo.toml
+        timeout-minutes: 30
       - name: install NSIS
         run: choco install nsis -y
       - name: build Tauri app
         run: pnpm tauri build --verbose
-        timeout-minutes: 45
+        timeout-minutes: 30
