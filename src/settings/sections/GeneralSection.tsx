@@ -10,8 +10,6 @@ export function GeneralSection() {
     setVimMode,
     wordWrap,
     setWordWrap,
-    minimap,
-    setMinimap,
     defaultShell,
     setDefaultShell,
     terminalFontSize,
@@ -55,7 +53,6 @@ export function GeneralSection() {
 
         <ToggleRow label="Vim mode" checked={vimMode} onChange={setVimMode} />
         <ToggleRow label="Word wrap" checked={wordWrap} onChange={setWordWrap} />
-        <ToggleRow label="Minimap" checked={minimap} onChange={setMinimap} />
       </div>
 
       {/* Terminal */}

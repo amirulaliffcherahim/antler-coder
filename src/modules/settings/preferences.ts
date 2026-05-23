@@ -23,7 +23,6 @@ interface PreferencesState {
   tabSize: number;
   vimMode: boolean;
   wordWrap: boolean;
-  minimap: boolean;
 
   // Autocomplete
   autocompleteEnabled: boolean;
@@ -44,7 +43,6 @@ interface PreferencesState {
   setTabSize: (size: number) => void;
   setVimMode: (enabled: boolean) => void;
   setWordWrap: (enabled: boolean) => void;
-  setMinimap: (enabled: boolean) => void;
   setAutocompleteEnabled: (enabled: boolean) => void;
   setAutocompleteMode: (mode: AutocompleteMode) => void;
   setAutocompleteProvider: (provider: ProviderConfig | null) => void;
@@ -60,7 +58,6 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
   tabSize: 2,
   vimMode: false,
   wordWrap: true,
-  minimap: true,
   autocompleteEnabled: true,
   autocompleteMode: "both",
   autocompleteProvider: null,
@@ -75,7 +72,6 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
     const tabSize = await getSetting("tabSize", 2);
     const vimMode = await getSetting("vimMode", false);
     const wordWrap = await getSetting("wordWrap", true);
-    const minimap = await getSetting("minimap", true);
     const autocompleteEnabled = await getSetting("autocompleteEnabled", true);
     const autocompleteMode = await getSetting<AutocompleteMode>("autocompleteMode", "both");
     const autocompleteProvider = await getSetting<ProviderConfig | null>("autocompleteProvider", null);
@@ -89,7 +85,6 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
       tabSize,
       vimMode,
       wordWrap,
-      minimap,
       autocompleteEnabled,
       autocompleteMode,
       autocompleteProvider,
@@ -125,10 +120,6 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
     void setSetting("wordWrap", enabled);
   },
 
-  setMinimap: (enabled) => {
-    set({ minimap: enabled });
-    void setSetting("minimap", enabled);
-  },
 
   setAutocompleteEnabled: (enabled) => {
     set({ autocompleteEnabled: enabled });

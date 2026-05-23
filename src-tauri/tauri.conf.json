@@ -47,6 +47,19 @@
   "productName": "Antler Coder",
   "version": "0.1.0",
   "identifier": "com.antler.coder",
+  "plugins": {
+    "updater": {
+      "active": true,
+      "dialog": true,
+      "pubkey": "MCowBQYDK2VwAyEAFBxjgtFIFfSHXtjROIPAWuvn8uHdnRGTHDJWJTddVv8=",
+      "endpoints": [
+        "https://releases.antler-coder.dev/updates/{{target}}-{{arch}}-{{current_version}}"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  },
   "app": {
     "security": {
       "csp": null,
