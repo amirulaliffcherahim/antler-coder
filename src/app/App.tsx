@@ -85,8 +85,6 @@ function AppContent() {
 
   useGlobalShortcuts();
 
-  // Register commands
-  useEffect(() => {
   // Load session on mount
   useEffect(() => {
     loadSession().then((s) => {
@@ -118,6 +116,8 @@ function AppContent() {
     return () => clearTimeout(timeout);
   }, [openFiles, activeFilePath, terminalState, agentTabs, activeAgentTabId, sessionReady, workspacePath]);
 
+  // Register commands
+  useEffect(() => {
     registerCommand({
       id: "toggle-explorer",
       name: "Toggle Explorer",

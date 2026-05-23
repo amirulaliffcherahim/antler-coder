@@ -74,9 +74,7 @@
         "resizable": true,
         "title": "Antler Coder",
         "width": 1200,
-        "titleBarStyle": "Overlay",
-        "hiddenTitle": true,
-        "transparent": true,
+        "transparent": false,
         "decorations": false
       }
     ]
