@@ -149,11 +149,14 @@ fn build_agent_command(
             use crate::modules::workspace::validate_wsl_distro_name;
             validate_wsl_distro_name(distro)?;
             let mut cmd = CommandBuilder::new("wsl.exe");
-            cmd.arg("-d").arg(distro);
+            cmd.arg("-d");
+            cmd.arg(distro);
             if let Some(cwd) = cwd {
-                cmd.arg("--cd").arg(cwd);
+                cmd.arg("--cd");
+                cmd.arg(cwd);
             }
-            cmd.arg("--exec").arg(binary);
+            cmd.arg("--exec");
+            cmd.arg(binary);
             cmd.args(args.iter().map(|s| s.as_str()));
             Ok(cmd)
         }
