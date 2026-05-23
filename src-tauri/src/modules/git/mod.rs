@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use tauri::command;
+use std::path::Path;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GitStatusEntry {
@@ -17,6 +18,35 @@ pub struct GitBranch {
 pub async fn git_status(_path: String) -> Result<Vec<GitStatusEntry>, String> {
     // Phase 0: stub — full implementation in Phase 6
     Ok(vec![])
+}
+
+/// Get the committed (HEAD) content of a file.
+/// Returns empty string for new/untracked files.
+#[command]
+pub async fn git_show(path: String) -> Result<String, String> {
+    let parent = Path::new(&path)
+        .parent()
+        .unwrap_or(Path::new("."));
+    let file_name = Path::new(&path)
+        .file_name()
+        .unwrap_or_default()
+        .to_string_lossy();
+
+    let output = tokio::process::Command::new("git")
+        .arg("-C")
+        .arg(parent)
+        .arg("show")
+        .arg(format!("HEAD:{}", file_name))
+        .output()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if output.status.success() {
+        Ok(String::from_utf8_lossy(&output.stdout).to_string())
+    } else {
+        // File may not exist in HEAD (new/untracked)
+        Ok(String::new())
+    }
 }
 
 #[command]

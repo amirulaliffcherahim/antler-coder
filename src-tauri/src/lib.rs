@@ -48,6 +48,7 @@ pub fn run() {
             modules::git::git_status,
             modules::git::git_diff,
             modules::git::git_branch,
+            modules::git::git_show,
             // Updater
             modules::updater::check_update,
         ])

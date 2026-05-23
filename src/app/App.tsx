@@ -17,11 +17,14 @@ import { useWorkspaceEnvStore, type WorkspaceEnv } from "@/modules/workspace";
 import WorkspacePicker from "@/modules/workspace/components/WorkspacePicker";
 import SearchPanel from "@/modules/search/SearchPanel";
 import OnboardingWizard from "@/modules/onboarding/OnboardingWizard";
+import { invoke } from "@tauri-apps/api/core";
 import { loadSession, saveSession, type SessionData } from "@/lib/session";
 import { useAgentShellStore } from "@/modules/agent-shell/store";
 
 // Lazy-load preview panel (react-markdown ~160 kB)
 const PreviewPanel = lazy(() => import("@/modules/preview/PreviewPanel"));
+// Lazy-load diff viewer (CodeMirror merge ~50 kB)
+const DiffView = lazy(() => import("@/modules/diff/DiffView"));
 
 interface OpenFile {
   path: string;
@@ -69,6 +72,8 @@ function AppContent() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [diffOpen, setDiffOpen] = useState(false);
+  const [diffData, setDiffData] = useState<{ original: string; modified: string } | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     // Check if user has completed onboarding before
     try {
@@ -172,6 +177,32 @@ function AppContent() {
       action: () => {
         resetPanelLayout();
         window.location.reload();
+      },
+    });
+    registerCommand({
+      id: "toggle-diff",
+      name: "Toggle Diff",
+      description: "Open git diff for the active file",
+      defaultBinding: "Space+d",
+      action: async () => {
+        if (!activeFilePath) return;
+        if (diffOpen) {
+          setDiffOpen(false);
+          return;
+        }
+        try {
+          const [original, modified] = await Promise.all([
+            invoke<string>("git_show", { path: activeFilePath }),
+            invoke<string>("fs_read_file", { path: activeFilePath }),
+          ]);
+          if (original === modified) {
+            // No changes — show empty diff or skip
+          }
+          setDiffData({ original, modified });
+          setDiffOpen(true);
+        } catch (e) {
+          console.error("Failed to load diff:", e);
+        }
       },
     });
     registerCommand({
@@ -286,11 +317,35 @@ function AppContent() {
                   </span>
                 </button>
               ))}
+              {/* Diff toggle */}
+              {activeFilePath && (
+                <button
+                  onClick={() => {
+                    if (diffOpen) { setDiffOpen(false); return; }
+                    Promise.all([
+                      invoke<string>("git_show", { path: activeFilePath }),
+                      invoke<string>("fs_read_file", { path: activeFilePath }),
+                    ]).then(([original, modified]) => {
+                      setDiffData({ original, modified });
+                      setDiffOpen(true);
+                    }).catch(console.error);
+                  }}
+                  className={`px-2 h-8 text-[10px] shrink-0 transition-colors ${
+                    diffOpen
+                      ? "text-neon-cyan border-l border-border bg-card"
+                      : "text-muted-foreground hover:text-foreground border-l border-border"
+                  }`}
+                  title="Git diff"
+                  aria-label="Git diff"
+                >
+                  {diffOpen ? "▸ Edit" : "◂ Diff"}
+                </button>
+              )}
               {/* Preview toggle */}
               {activeFilePath && /\.md$/i.test(activeFilePath) && (
                 <button
                   onClick={() => setPreviewOpen((v) => !v)}
-                  className={`ml-auto px-2 h-8 text-[10px] shrink-0 transition-colors ${
+                  className={`px-2 h-8 text-[10px] shrink-0 transition-colors ${
                     previewOpen
                       ? "text-neon-cyan border-l border-border bg-card"
                       : "text-muted-foreground hover:text-foreground border-l border-border"
@@ -358,6 +413,24 @@ function AppContent() {
               </div>
             )}
             </div>
+
+          {/* Diff panel */}
+          {diffOpen && !zenMode && diffData && (
+            <div className="flex-1 shrink-0 border-l border-border flex flex-col min-w-0">
+              <Suspense fallback={
+                <div className="flex items-center justify-center h-full text-muted-foreground text-[11px]">
+                  Loading diff…
+                </div>
+              }>
+                <DiffView
+                  original={diffData.original}
+                  modified={diffData.modified}
+                  filePath={activeFilePath ?? ""}
+                  onClose={() => { setDiffOpen(false); setDiffData(null); }}
+                />
+              </Suspense>
+            </div>
+          )}
 
           {/* Preview panel */}
           {previewOpen && !zenMode && (
