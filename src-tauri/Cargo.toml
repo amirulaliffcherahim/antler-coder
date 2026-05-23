@@ -26,13 +26,24 @@ tauri-plugin-updater = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", features = ["full"] }
-notify = "6"
+
 ignore = "0.4"
 portable-pty = "0.8"
 shared_child = "1"
 which = "6"
 
-keyring = { version = "3", features = ["apple-native", "linux-native", "windows-native"] }
+
+[target.'cfg(windows)'.dependencies]
+notify = { version = "6", default-features = false, features = ["crossbeam-channel"] }
+keyring = { version = "3", features = ["windows-native"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+notify = { version = "6", default-features = false, features = ["macos_fsevent", "crossbeam-channel"] }
+keyring = { version = "3", features = ["apple-native"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+notify = { version = "6", default-features = false, features = ["crossbeam-channel"] }
+keyring = { version = "3", features = ["linux-native"] }
 
 [features]
 # This feature is used for production builds or when `devPath` points to the filesystem
