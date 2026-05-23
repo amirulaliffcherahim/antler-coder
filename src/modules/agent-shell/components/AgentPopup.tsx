@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { invoke, Channel } from "@tauri-apps/api/core";
 import { useAgentShellStore } from "../store";
 import type { ExternalAgentConfig } from "../lib/types";
@@ -24,16 +24,30 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
   const openTab = useAgentShellStore((s) => s.openTab);
   const updateTabStatus = useAgentShellStore((s) => s.updateTabStatus);
   const [showPicker, setShowPicker] = useState(false);
+  // Shared ref map: ptyId → data sink registered by AgentTerminal
+  const dataSinks = useRef<Record<number, ((data: Uint8Array) => void) | null>>({});
+  const tabPtyMap = useRef<Record<string, number>>({});
+  const ptyTabMap = useRef<Record<number, string>>({});
 
   const spawnAgent = useCallback(
     async (config: ExternalAgentConfig) => {
       try {
+        const onData = new Channel<ArrayBuffer>();
         const onExit = new Channel<number>();
+        let ptyId = 0;
+
+        // Channel callbacks fire after invoke completes — ptyId will be set by then
+        onData.onmessage = (buf: ArrayBuffer) => {
+          const sink = dataSinks.current[ptyId];
+          if (sink) sink(new Uint8Array(buf));
+        };
         onExit.onmessage = (code) => {
+          const tabId = ptyTabMap.current[ptyId];
+          if (tabId) updateTabStatus(tabId, "exited");
           console.log(`Agent exited with code ${code}`);
         };
 
-        const ptyId = await invoke<number>("agent_pty_open", {
+        ptyId = await invoke<number>("agent_pty_open", {
           command: config.binary,
           args: config.args,
           env: config.env,
@@ -41,17 +55,20 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
           workspace: toRustWorkspace(workspaceEnv),
           cols: 80,
           rows: 24,
-          onData: null,
+          onData,
           onExit,
         });
 
-        openTab(config.id, ptyId, config.name);
+        const tabId = openTab(config.id, ptyId, config.name);
+        tabPtyMap.current[tabId] = ptyId;
+        ptyTabMap.current[ptyId] = tabId;
+        dataSinks.current[ptyId] = null;
         setShowPicker(false);
       } catch (e) {
         console.error("Failed to spawn agent:", e);
       }
     },
-    [openTab, workspaceEnv]
+    [openTab, updateTabStatus, workspaceEnv]
   );
 
   if (!open) return null;
@@ -110,19 +127,29 @@ export default function AgentPopup({ open, onClose, workspaceEnv }: AgentPopupPr
               </div>
             </div>
           ) : (
-            tabs.map((tab) => (
-              <div
-                key={tab.id}
-                className="absolute inset-0"
-                style={{ display: tab.id === activeTabId ? "block" : "none" }}
-              >
-                <AgentTerminal
-                  ptyId={tab.ptyId}
-                  visible={tab.id === activeTabId}
-                  onExit={() => updateTabStatus(tab.id, "exited")}
-                />
-              </div>
-            ))
+            tabs.map((tab) => {
+              // Create a stable ref for data routing between spawnAgent and AgentTerminal
+              if (!(tab as any)._dataSinkRef) {
+                (tab as any)._dataSinkRef = {
+                  get current() { return dataSinks.current[tab.ptyId] ?? null; },
+                  set current(fn: ((data: Uint8Array) => void) | null) { dataSinks.current[tab.ptyId] = fn; },
+                };
+              }
+              return (
+                <div
+                  key={tab.id}
+                  className="absolute inset-0"
+                  style={{ display: tab.id === activeTabId ? "block" : "none" }}
+                >
+                  <AgentTerminal
+                    ptyId={tab.ptyId}
+                    visible={tab.id === activeTabId}
+                    onExit={() => updateTabStatus(tab.id, "exited")}
+                    dataSink={(tab as any)._dataSinkRef}
+                  />
+                </div>
+              );
+            })
           )}
         </div>
       </div>

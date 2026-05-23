@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { WebLinksAddon } from "@xterm/addon-web-links";
-import { invoke, Channel } from "@tauri-apps/api/core";
+import { invoke } from "@tauri-apps/api/core";
 import "@xterm/xterm/css/xterm.css";
 import { useTheme } from "@/modules/theme/useTheme";
 
@@ -10,10 +10,13 @@ interface AgentTerminalProps {
   ptyId: number;
   visible: boolean;
   onExit?: () => void;
+  /** Shared ref for the parent to push PTY data */
+  dataSink?: React.MutableRefObject<((data: Uint8Array) => void) | null>;
 }
 
-export default function AgentTerminal({ ptyId, visible, onExit }: AgentTerminalProps) {
+export default function AgentTerminal({ ptyId, visible, onExit, dataSink }: AgentTerminalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const termRef = useRef<Terminal | null>(null);
   const { tokens } = useTheme();
 
   useEffect(() => {
@@ -57,36 +60,14 @@ export default function AgentTerminal({ ptyId, visible, onExit }: AgentTerminalP
     term.open(containerRef.current);
     fitAddon.fit();
 
-    // Wire PTY data → terminal
-    const onData = new Channel<ArrayBuffer>();
-    const onExitChannel = new Channel<number>();
+    termRef.current = term;
 
-    onData.onmessage = (buf) => {
-      term.write(new Uint8Array(buf));
-    };
-    onExitChannel.onmessage = (code) => {
-      term.writeln(`\r\nProcess exited with code ${code}`);
-      onExit?.();
-    };
-
-    // Set up data channel binding
-    (async () => {
-      try {
-        await invoke("agent_pty_open", {
-          command: "",
-          args: [],
-          env: {},
-          cwd: null,
-          workspace: { kind: "local" },
-          cols: fitAddon.proposeDimensions()?.cols ?? 80,
-          rows: fitAddon.proposeDimensions()?.rows ?? 24,
-          onData,
-          onExit: onExitChannel,
-        });
-      } catch {
-        // PTY already opened externally; we'll receive data via the channel
-      }
-    })();
+    // Wire data sink: parent writes PTY output → terminal
+    if (dataSink) {
+      dataSink.current = (data: Uint8Array) => {
+        term.write(data);
+      };
+    }
 
     // Terminal input → PTY
     term.onData((data) => {
@@ -112,8 +93,12 @@ export default function AgentTerminal({ ptyId, visible, onExit }: AgentTerminalP
     return () => {
       observer.disconnect();
       term.dispose();
+      termRef.current = null;
+      if (dataSink) {
+        dataSink.current = null;
+      }
     };
-  }, [ptyId, tokens, onExit]);
+  }, [ptyId, tokens, onExit, dataSink]);
 
   return (
     <div
