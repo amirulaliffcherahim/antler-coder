@@ -51,8 +51,12 @@ jobs:
       - name: install Rust
         uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
-      - name: build app
-        run: pnpm tauri build --verbose
+      - name: build app with tauri-action
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: "--verbose"
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
