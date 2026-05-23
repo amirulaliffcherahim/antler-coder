@@ -52,7 +52,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - run: pnpm install --frozen-lockfile
       - name: build app
-        run: pnpm tauri build --bundles msi --verbose
+        run: pnpm tauri build --verbose
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -78,7 +78,7 @@ jobs:
           targets: aarch64-apple-darwin
       - run: pnpm install --frozen-lockfile
       - name: build app
-        run: pnpm tauri build --target aarch64-apple-darwin --bundles dmg --verbose
+        run: pnpm tauri build --target aarch64-apple-darwin --verbose
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
